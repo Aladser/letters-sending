@@ -1,0 +1,18 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <div class="w-50 mx-auto">
+            <form method="post" enctype="multipart/form-data" class="form-floating">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mx-auto border w-50">
+                    <button type="submit" class="btn-theme border-0 rounded d-block mb-2 w-100">Войти</button>
+                    <a href="{% url 'authen:password-reset' %}" class="btn-theme rounded btn-my-link d-block mb-2 w-100">Забыл пароль</a>
+                    <a href="{% url 'index' %}" class="btn-theme rounded btn-my-link d-block w-100">На главную</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

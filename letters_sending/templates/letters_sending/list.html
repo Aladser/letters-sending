@@ -1,0 +1,31 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div class="mb-4"><a href="{% url 'letter_sending_create' %}" class="btn-theme rounded">Создать рассылку</a></div>
+{% endif %}
+
+<table class="table table-striped shadow">
+    <tr>
+        <th>ID</th>
+        <th>Сообщение</th>
+        <th class="text-center ls-client">Клиентов</th>
+        <th class="text-center">Периодичность</th>
+        <th class="text-center">Статус</th>
+        <th class="text-center">Дата следующей отправки</th>
+    </tr>
+
+    {% for sending in object_list%}
+    <tr>
+        <td>{{sending.pk}}</td>
+        <td><a href="{% url 'letter_sending_detail' sending.pk %}" class="table__link">{{sending.message}}</a></td>
+        <td class="text-center ls-client">{{sending.clients.all.count}}</td>
+        <td class="text-center">{{sending.period}}</td>
+        <td class="text-center">{{sending.status|custom_status|safe}}</td>
+        <td class="text-center">{{sending.next_sending|date:"d-m-Y, G:i:s"}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

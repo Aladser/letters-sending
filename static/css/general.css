@@ -1,0 +1,104 @@
+html {
+    --theme-color: rgb(0, 150, 255);
+    --theme-darker-color: rgb(0,100,255);
+    --theme-lighter-color: rgb(0,200,255);
+    --theme-grey-color: #D3D3D3;
+}
+
+
+.w-10 {width: 10rem;}
+.w-15 {width: 15rem;}
+.bg-white {background-color:white;}
+.bg-theme {background-color:var(--theme-color);}
+.bg-theme-lighter {background-color:var(--theme-lighter-color);}
+.box-shadow-white {box-shadow: 10px 5px 5px white;}
+.no-auth-user{opacity:0.75}
+
+/*Заголовок*/
+.header {
+    padding: 1rem 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--theme-grey-color);
+    box-shadow: 0 5px 5px 0 var(--theme-grey-color);
+    background-color: var(--theme-color);
+    font-weight: 600;
+    color: white;
+}
+/*меню заголовка*/
+.main-menu__menu {
+    margin-top:1em;
+    width:10rem;
+    box-shadow: 0px 5px 5px 0px var(--theme-grey-color);
+    position:absolute;
+    right:0.5em;
+    top:1em;
+    z-index:1000;
+    background-color: #fff;
+}
+/* лого заголовка */
+.header__logo{
+    width:2.5rem;
+    margin-right: 0.75rem;
+}
+.header__logo:hover {
+    opacity: 0.75;
+}
+
+
+.table__link {
+    color: #333;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 0.3rem;
+}
+
+.btn-theme {
+    width: 8rem;
+    text-decoration: none;
+    background-color: var(--theme-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 3%;
+    text-align: center;
+}
+.btn-theme:hover {
+    background-color: var(--theme-lighter-color);
+}
+.btn-my-link{
+    display: inline-block;
+}
+
+
+/* главное меню*/
+.main-menu {
+    display:flex;
+    align-items:center;
+
+    position:relative;
+    margin-bottom: 0.1rem;
+}
+.main-menu__item {
+    display: block;
+    text-shadow: white 1px 2px 10px;
+    color:#555;
+
+    text-decoration: none;
+    text-align:end;
+    padding: 0.25em 0.5em;
+    margin-bottom: 0.25rem;
+}
+.main-menu__item:hover {
+    background-color: #EEE;
+}
+
+
+/* имя пользователя */
+.auth-user-link{
+    text-decoration: none;
+    color:white;
+    padding: 0.25em 0.5em;
+    border-radius: 20px;
+}
+.auth-user-link:hover{
+    background-color: #3583a1;
+}

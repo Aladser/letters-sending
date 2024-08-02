@@ -1,0 +1,37 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-4">
+    <div class="text-center mb-2">
+        <div class="fw-bolder">Тема сообщения</div>
+        <p class="border-2 border-bottom p-1">{{object.message}}</p>
+
+        <div class="fw-bolder">Клиенты</div>
+        <div class="border-2 border-bottom p-1 mb-3">
+            {% for client in object.clients.all %}<div>{{client}}</div>{% endfor %}
+        </div>
+
+        <div class="fw-bolder">Дата первой отправки</div>
+        <p class="border-2 border-bottom p-1">{{object.first_sending|date:"d-m-Y, G:i:s"}}</p>
+
+        <div class="fw-bolder">Дата следующей отправки</div>
+        <p class="border-2 border-bottom p-1">{{object.next_sending|date:"d-m-Y, G:i:s"}}</p>
+
+        <div class="fw-bolder">Периодичность</div>
+        <p class="border-2 border-bottom p-1">{{object.period}}</p>
+
+        <div class="fw-bolder">Статус</div>
+        <p class="border-2 border-bottom p-1">{{object.status}}</p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="mb-2">
+        <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Изменить</a>
+        <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

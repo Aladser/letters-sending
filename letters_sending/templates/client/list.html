@@ -1,0 +1,47 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div class="ps-2 mb-4">
+    <a href="{% url 'client_create' %}" class="btn-theme rounded">Добавить пользователя</a>
+</div>
+{% endif %}
+
+<div class="d-flex flex-wrap">
+    {% for client in object_list%}
+    <div class="card m-2 p-4 d-flex flex-column justify-content-between" style="width: 15rem">
+        <div>
+            <div class="fw-bolder mb-2">
+                <div class="card-text">{{client.surname}}</div>
+                <div class="card-text">{{client.name}}</div>
+                {% if client.patronym %}
+                <div class="card-text">{{client.patronym}}</div>
+                {% else %}
+                <div class="card-text text-light">none</div>
+                {% endif %}
+
+            </div>
+
+            <div class="card-text mb-2">{{client.email}}</div>
+
+            {% if client.comment%}
+            <div class="card-text mb-2 fs-6 text-secondary fst-italic text-wrap">Заметка: {{client.comment}}</div>
+            {% else %}
+            <br>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div>
+            <a href="{% url 'client_edit' client.pk %}" class="d-block btn-theme mb-1 w-100 rounded">Изменить</a>
+            <a href="{% url 'client_delete' client.pk %}" class="d-block btn-theme w-100 rounded">Удалить</a>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+    <div class="pricing-header px-3 mx-auto text-center">
+        <div class="info-container">
+            <form method="post">
+                {% csrf_token %}
+                <p>Действительно хотите удалить {{object_type_name}} <br><span class="fw-bolder d-inline-block m-2">{{object}}</span>?</p>
+                <button type="submit" class="btn-theme rounded border-0 mb-2 w-10">Подтвердить</button>
+                <a href="{{back_url}}" class="d-inline-block btn-theme rounded w-10">Отмена</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

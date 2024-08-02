@@ -1,0 +1,15 @@
+.info-container {
+    background-color: white;
+    padding: 1em 0.5em;
+    border: 1px solid #ddd;
+}
+
+.info-container button, .info-container a{
+    width: 25%;
+}
+
+@media(max-width: 750px) {
+    .info-container button, .info-container a{
+        width: 40%;
+    }
+}

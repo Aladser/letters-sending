@@ -1,0 +1,26 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+<table class="table table-striped shadow">
+    <tr>
+        <th class="text-center">ID рассылки</th>
+        <th>Статус</th>
+        <th>Сообщение</th>
+        <th>Ответ почтового сервера</th>
+        <th class="text-center">Попыток</th>
+    </tr>
+
+    {% for object in object_list%}
+    <tr>
+        <td class="text-center">{{object.letters_sending}}</td>
+        <td>{{object.status|custom_status|safe}}</td>
+        <td>{{object.message}}</td>
+        <td>{{object.response}}</td>
+        <td class="text-center">{{object.count}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

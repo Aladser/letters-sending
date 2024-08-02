@@ -1,0 +1,26 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <div class="w-75 mx-auto">
+            <form method="post" enctype="multipart/form-data" class="form-floating">
+                {% csrf_token %}
+
+                {% for field in form%}
+                <p>
+                    {{field.label|custom_label:required_fields|safe}}
+                    {{field}}
+                </p>
+                {% endfor %}
+
+                {% if object %}
+                    <button type="submit" class="btn-theme border-0 rounded">Сохранить</button>
+                {% else %}
+                    <button type="submit" class="btn-theme border-0 rounded">Создать</button>
+                {% endif %}
+                <a href="{{back_url}}" class="btn-theme btn-my-link rounded">Отмена</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

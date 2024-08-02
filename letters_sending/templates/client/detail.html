@@ -1,0 +1,20 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-2">
+    <div class="fw-bolder">Пользователь</div>
+    <p class="w-75 text-center p-2 ">{{object.surname}} {{object.name}} {{object.patronym}}</p>
+    <div class="fw-bolder">Почта</div>
+    <p class="w-75 text-center p-2 ">{{object.email}}</p>
+
+    {% if object.comment %}
+    <div class="fw-bolder">Заметка о пользователе</div>
+    <p class="w-75 text-center p-2 ">{{object.comment}}</p>
+    {% endif %}
+
+    <div class="mb-2">
+        <a href="{% url 'client_edit' object.pk %}" class="btn-theme rounded">Изменить</a>
+        <a href="{% url 'client_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+    </div>
+</div>
+{% endblock %}

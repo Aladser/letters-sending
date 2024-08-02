@@ -1,0 +1,30 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div class="ps-2 mb-4">
+    <a href="{% url 'message_create' %}" class="btn-theme rounded">Создать сообщение</a>
+</div>
+{% endif %}
+
+<div class="d-flex flex-wrap">
+    {% for msg in object_list%}
+    <div class="card m-2 p-4 d-flex flex-column justify-content-between" style="width: 15rem">
+        <div class="mb-2">
+            <div class="card-title fw-bolder">{{msg.subject}}</div>
+            <div class="card-text">{{msg.content|truncatechars:150}}</div>
+        </div>
+
+        <div>
+            <a href="{% url 'message_detail' msg.pk %}" class="d-block btn-theme mb-1 w-100 rounded">Подробнее</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'message_delete' msg.pk %}?type=list" class="d-block btn-theme w-100 rounded">Удалить</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

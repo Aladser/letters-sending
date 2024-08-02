@@ -1,0 +1,13 @@
+APScheduler==3.10.4
+asgiref==3.8.1
+Django==4.2.13
+django-apscheduler==0.6.2
+pillow==10.3.0
+psycopg==3.1.19
+psycopg-binary==3.1.19
+pytils==0.4.1
+pytz==2024.1
+six==1.16.0
+sqlparse==0.5.0
+typing_extensions==4.12.2
+tzlocal==5.2
