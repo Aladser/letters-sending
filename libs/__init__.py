@@ -1,4 +1,3 @@
-from libs.send_letters import send_letters
-from libs.letsend_schedulrer import LettersSendingScheduler
 from libs.custom_formatter import CustomFormatter
 from libs.login_required_mixin import CustomLoginRequiredMixin
+from libs.truncate_table_mixin import TruncateTableMixin

@@ -5,7 +5,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending
-from libs import send_letters, CustomFormatter, CustomLoginRequiredMixin
+from libs import CustomFormatter, CustomLoginRequiredMixin
+from libs.send_letters import send_letters
 
 TEMPLATE_FOLDER = "letters_sending/"
 
