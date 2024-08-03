@@ -1,8 +1,10 @@
 from django.db import models
 from config.settings import NULLABLE
+from libs import TruncateTableMixin
 
 
-class Message(models.Model):
+# ----- СООБЩЕНИЕ -----
+class Message(TruncateTableMixin, models.Model):
     """Сообщение"""
 
     subject = models.CharField(verbose_name="Заголовок", max_length=100)
@@ -16,8 +18,8 @@ class Message(models.Model):
     def __str__(self):
         return self.subject
 
-
-class Client(models.Model):
+# ----- КЛИЕНТ -----
+class Client(TruncateTableMixin, models.Model):
     """Клиент"""
 
     email = models.EmailField(verbose_name="Почта", unique=True)
@@ -38,6 +40,7 @@ class Client(models.Model):
             return f"{self.surname} {self.name} ({self.email})"
 
 
+# ----- ИНТЕРВАЛ ОТПРАВКИ -----
 class DatePeriod(models.Model):
     """Интервал отправки"""
 
@@ -54,6 +57,7 @@ class DatePeriod(models.Model):
         return self.description
 
 
+# ----- СТАТУС РАССЫЛКИ -----
 class Status(models.Model):
     """Статус рассылки"""
 
@@ -69,6 +73,7 @@ class Status(models.Model):
         return self.description
 
 
+# ----- РАССЫЛКА -----
 class LettersSending(models.Model):
     """Рассылка"""
 
@@ -105,6 +110,7 @@ class LettersSending(models.Model):
         return f"{self.message} - {clients_list}"
 
 
+# ----- ПОПЫТКА ОТПРАВКИ -----
 class Attempt(models.Model):
     """Попытка рассылки"""
 
