@@ -3,7 +3,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
-from libs import CustomFormatter, CustomLoginRequiredMixin
+from libs.custom_formatter import CustomFormatter
+from libs.login_required_mixin import CustomLoginRequiredMixin
 
 
 class ClientListView(ListView):

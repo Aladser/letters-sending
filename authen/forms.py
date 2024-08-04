@@ -2,9 +2,8 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
-
 from authen.models import User
-from libs import CustomFormatter
+from libs.custom_formatter import CustomFormatter
 
 
 class AuthForm(AuthenticationForm):

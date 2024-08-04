@@ -1,5 +1,5 @@
 from pathlib import Path
-from config.env import env
+from libs.env import env
 
 APP_NAME = "Сервис рассылок"
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,13 +103,13 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# ПЛАНИРОВЩИК
-APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s"
-SCHEDULER_ACTIVE = False
-SCHEDULER_INTERVAL = 15
-
 # АУТЕНТИФИКАЦИЯ И АВТОРИЗАЦИЯ
 AUTH_USER_MODEL = "authen.User"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# ПЛАНИРОВЩИК
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s"
+SCHEDULER_INTERVAL = 15
+SCHEDULER_ACTIVE = False
 

@@ -3,7 +3,7 @@ from time import sleep
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from django.core.management import BaseCommand
 from config.settings import SCHEDULER_INTERVAL
-from libs import LettersSendingScheduler
+from libs.letsend_schedulrer import LettersSendingScheduler
 
 
 class Command(BaseCommand):
@@ -14,4 +14,6 @@ class Command(BaseCommand):
             while True:
                 sleep(SCHEDULER_INTERVAL)
         except SchedulerAlreadyRunningError as e:
-            print("Планировщик уже запущен")
+            print("Активен встроенный планировщик рассылки писем")
+        except KeyboardInterrupt:
+            print('\nКонсольный планировщик рассылки писем остановлен')
