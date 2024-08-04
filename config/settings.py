@@ -1,5 +1,5 @@
 from pathlib import Path
-from config.env import env
+from libs.env import env
 
 APP_NAME = "Сервис рассылок"
 BASE_DIR = Path(__file__).resolve().parent.parent
