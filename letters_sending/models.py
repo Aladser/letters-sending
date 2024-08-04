@@ -1,6 +1,6 @@
 from django.db import models
 from config.settings import NULLABLE
-from libs import TruncateTableMixin
+from libs.truncate_table_mixin import TruncateTableMixin
 
 
 # ----- СООБЩЕНИЕ -----
