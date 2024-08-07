@@ -136,7 +136,6 @@ class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
 
 # УСТАНОВИТЬ АКТИВНОСТЬ ПОЛЬЗОВАТЕЛЯ
 @login_required
-@permission_required('authen.activate_user')
 def set_user_activation(request):
     """установить активность пользователя """
 

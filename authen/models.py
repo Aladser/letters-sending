@@ -38,7 +38,7 @@ class User(TruncateTableMixin, AbstractUser):
         verbose_name_plural = 'пользователи'
         ordering = ('first_name', 'last_name', 'email')
         permissions = [
-            ('activate_user', 'Активировать'),
+            ('block_user', 'Блокировать'),
         ]
 
     def __str__(self):

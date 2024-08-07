@@ -18,7 +18,7 @@ class Command(BaseCommand):
         view_letterssending_perm = Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type)
         activate_letterssending_perm = Permission.objects.get(codename='activate_letterssending', content_type=letters_sending_content_type)
         view_user_perm = Permission.objects.get(codename='view_user', content_type=user_content_type)
-        activate_user_perm = Permission.objects.get(codename='activate_user', content_type=user_content_type)
+        activate_user_perm = Permission.objects.get(codename='block_user', content_type=user_content_type)
 
         interface_managers_group.permissions.add(view_letterssending_perm)
         interface_managers_group.permissions.add(activate_letterssending_perm)
