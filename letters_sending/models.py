@@ -18,6 +18,7 @@ class Message(TruncateTableMixin, models.Model):
     def __str__(self):
         return self.subject
 
+
 # ----- КЛИЕНТ -----
 class Client(TruncateTableMixin, models.Model):
     """Клиент"""

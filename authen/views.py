@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
@@ -116,3 +116,14 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'password_reset_confirm.html'
     form_class = UserSetPasswordForm
     success_url = reverse_lazy('authen:password_reset_complete')
+
+
+# СПИСОК ПОЛЬЗОВАТЕЛЙ
+class UserListView(ListView):
+    model = User
+    template_name = "user/list.html"
+    title = 'список пользователей'
+    extra_context = {
+        'title': title,
+        'header': title.capitalize()
+    }

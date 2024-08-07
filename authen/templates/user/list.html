@@ -1,0 +1,21 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <th>Почта</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Активен</th>
+        </tr>
+
+        {% for user in object_list%}
+            <tr>
+                <td>{{user.email}}</td>
+                <td>{{user.first_name}}</td>
+                <td>{{user.last_name}}</td>
+                {% if user.is_active %}<td>Да</td>{% else %}<td>Нет</td>{% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
