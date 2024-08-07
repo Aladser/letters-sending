@@ -2,8 +2,7 @@
 
 {% block content %}
     <div class="container mt-3">
-        <h3 class="mb-4">Заголовок</h3>
-        <p>Содержание</p>
+        <p>{{description}}</p>
         <a href="{% url 'index' %}" class="btn-theme rounded">Вернуться на главную</a>
     </div>
 {% endblock %}

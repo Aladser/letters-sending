@@ -55,6 +55,9 @@ class RegisterView(CreateView):
                 (self.object.email,),
                 fail_silently=True
             )
+            header = 'Регистрация успешно завершена!'
+            description = 'Ссылка для подтверждения регистрации отправлена на вашу почту.'
+            return render(self.request, 'info.html', {'header': header, 'description': description})
 
         return super().form_valid(form)
 
@@ -113,4 +116,3 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'password_reset_confirm.html'
     form_class = UserSetPasswordForm
     success_url = reverse_lazy('authen:password_reset_complete')
-
