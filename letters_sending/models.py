@@ -1,4 +1,6 @@
 from django.db import models
+
+from authen.models import User
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
@@ -9,6 +11,13 @@ class Message(TruncateTableMixin, models.Model):
 
     subject = models.CharField(verbose_name="Заголовок", max_length=100)
     content = models.TextField(verbose_name="Содержание")
+    owner = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='messages',
+        verbose_name='автор',
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "Сообщение"
@@ -28,6 +37,13 @@ class Client(TruncateTableMixin, models.Model):
     name = models.CharField(verbose_name="Имя", max_length=100)
     patronym = models.CharField(verbose_name="Отчество", max_length=100, **NULLABLE)
     comment = models.CharField(verbose_name="Комментарий", max_length=255, **NULLABLE)
+    owner = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='clients',
+        verbose_name='автор',
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "Клиент"
@@ -101,6 +117,13 @@ class LettersSending(models.Model):
     first_sending = models.DateTimeField(verbose_name="Дата и время первой отправки", **NULLABLE)
     next_sending = models.DateTimeField(verbose_name="Дата и время следующей отправки", **NULLABLE)
     is_active = models.BooleanField(verbose_name='Активность', default=True)
+    owner = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='sendings',
+        verbose_name='автор',
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "Почтовая рассылка"
