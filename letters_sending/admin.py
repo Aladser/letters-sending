@@ -4,16 +4,16 @@ from letters_sending.models import Message, Client, DatePeriod, Status, LettersS
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('subject', 'content', 'owner')
+    list_display = ('pk', 'subject', 'content', 'owner')
     search_fields = ('subject',)
     ordering = ("pk",)
 
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('email', 'surname', 'name', 'patronym', 'owner', "comment")
+    list_display = ('pk', 'email', 'surname', 'name', 'patronym', 'owner', "comment")
     search_fields = ('email', 'surname', 'name', 'patronym')
-    ordering = ("email",)
+    ordering = ("pk",)
 
 
 @admin.register(DatePeriod)
@@ -30,7 +30,7 @@ class StatusAdmin(admin.ModelAdmin):
 
 @admin.register(LettersSending)
 class NewsletterAdmin(admin.ModelAdmin):
-    list_display = ('message', "period", 'status', 'first_sending', 'next_sending', 'owner')
+    list_display = ('pk', 'message', "period", 'status', 'first_sending', 'next_sending', 'owner')
     ordering = ("next_sending", "status", "period")
 
 

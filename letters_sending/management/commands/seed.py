@@ -36,7 +36,9 @@ class Command(BaseCommand):
         {'surname': 'Макаров', 'name': 'Ян', 'patronym': 'Андреевич', 'owner_id': 3},
         {'surname': 'Еремин', 'name': 'Степан', 'patronym': 'Владимирович', 'owner_id': 3},
         {'surname': 'Лазарева', 'name': 'Александра', 'patronym': 'Святославовна', 'owner_id': 3},
-        {'surname': 'Мельникова', 'name': 'Алиса', 'patronym': 'Эмировна', 'owner_id': 3}, ]
+        {'surname': 'Мельникова', 'name': 'Алиса', 'patronym': 'Эмировна', 'owner_id': 3},
+        {'surname': 'Мельников', 'name': 'Петр', 'patronym': 'Олегович', 'owner_id': 3},
+    ]
 
     # Сообщения
     subjects_list = [
