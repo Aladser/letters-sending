@@ -1,0 +1,36 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+    {{user.perms}}
+    <table class="table shadow">
+        <tr>
+            <th>Почта</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th></th>
+        </tr>
+
+        {% for user_obj in object_list%}
+            <tr>
+                <td class="align-middle">{{user_obj.email}}</td>
+                <td class="align-middle">{{user_obj.first_name}}</td>
+                <td class="align-middle">{{user_obj.last_name}}</td>
+                <td class="text-end">
+                    {% if user == user_obj %}
+                        <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Это вы</span>
+                    {% elif not user_obj.is_superuser%}
+                        <form method="post" action="{% url 'authen:set-activation' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="pk" value={{user_obj.pk}}>
+                            <input type="hidden" name="email" value={{user_obj.email}}>
+                            <button type="submit" class="btn-theme w-50 border-0 rounded p-1 ">{{user_obj.is_active|activation_action}}</button>
+                        </form>
+                    {% else %}
+                        <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Суперпользователь</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

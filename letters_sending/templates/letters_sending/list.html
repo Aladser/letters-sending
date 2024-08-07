@@ -11,16 +11,19 @@
     <tr>
         <th>ID</th>
         <th>Сообщение</th>
+        <th>Автор</th>
         <th class="text-center ls-client">Клиентов</th>
         <th class="text-center">Периодичность</th>
         <th class="text-center">Статус</th>
         <th class="text-center">Дата следующей отправки</th>
+
     </tr>
 
     {% for sending in object_list%}
     <tr>
         <td>{{sending.pk}}</td>
         <td><a href="{% url 'letter_sending_detail' sending.pk %}" class="table__link">{{sending.message}}</a></td>
+        <td>{{sending.owner}}</td>
         <td class="text-center ls-client">{{sending.clients.all.count}}</td>
         <td class="text-center">{{sending.period}}</td>
         <td class="text-center">{{sending.status|custom_status|safe}}</td>

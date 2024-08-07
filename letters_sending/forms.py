@@ -43,13 +43,13 @@ class LettersSendingUpdateForm(GeneralForm):
 
     class Meta:
         model = LettersSending
-        fields = ('message', 'clients', 'next_sending', 'period', 'status')
+        fields = ('message', 'clients', 'next_sending', 'period', 'status', 'is_active')
 
 
 class MessageForm(GeneralForm):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ('subject', 'content')
 
 
 class ClientForm(GeneralForm):

@@ -1,7 +1,9 @@
 from django.core.management import BaseCommand
 from pytils.translit import slugify
-from config import env
+
+from authen.models import User
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
+from libs.env import env
 
 
 class Command(BaseCommand):
@@ -23,17 +25,20 @@ class Command(BaseCommand):
         {'pk': 3, 'name': 'completed', 'description': 'Завершена'},
     ]
 
+
     # Клиенты
     clients_list = [
-        {'surname': 'Софронов', 'name': 'Александр', 'patronym': 'Глебович'},
-        {'surname': 'Калугин', 'name': 'Матвей', 'patronym': 'Александрович'},
-        {'surname': 'Попов', 'name': 'Даниил', 'patronym': 'Станиславович'},
-        {'surname': 'Дроздова', 'name': 'Надежда', 'patronym': 'Александровна'},
-        {'surname': 'Виноградов', 'name': 'Вадим', 'patronym': 'Михайлович'},
-        {'surname': 'Макаров', 'name': 'Ян', 'patronym': 'Андреевич'},
-        {'surname': 'Еремин', 'name': 'Степан', 'patronym': 'Владимирович'},
-        {'surname': 'Лазарева', 'name': 'Александра', 'patronym': 'Святославовна'},
-        {'surname': 'Мельникова', 'name': 'Алиса', 'patronym': 'Эмировна'}, ]
+        {'surname': 'Софронов', 'name': 'Александр', 'patronym': 'Глебович', 'owner_id': 2},
+        {'surname': 'Калугин', 'name': 'Матвей', 'patronym': 'Александрович', 'owner_id': 2},
+        {'surname': 'Попов', 'name': 'Даниил', 'patronym': 'Станиславович', 'owner_id': 2},
+        {'surname': 'Дроздова', 'name': 'Надежда', 'patronym': 'Александровна', 'owner_id': 2},
+        {'surname': 'Виноградов', 'name': 'Вадим', 'patronym': 'Михайлович', 'owner_id': 2},
+        {'surname': 'Макаров', 'name': 'Ян', 'patronym': 'Андреевич', 'owner_id': 3},
+        {'surname': 'Еремин', 'name': 'Степан', 'patronym': 'Владимирович', 'owner_id': 3},
+        {'surname': 'Лазарева', 'name': 'Александра', 'patronym': 'Святославовна', 'owner_id': 3},
+        {'surname': 'Мельникова', 'name': 'Алиса', 'patronym': 'Эмировна', 'owner_id': 3},
+        {'surname': 'Мельников', 'name': 'Петр', 'patronym': 'Олегович', 'owner_id': 3},
+    ]
 
     # Сообщения
     subjects_list = [
@@ -62,6 +67,9 @@ class Command(BaseCommand):
     ]
 
     def handle(self, *args, **kwargs):
+        if User.objects.all().count() == 0:
+            raise Exception('Пользователи не найдены')
+
         LettersSending.objects.all().delete()
         Attempt.objects.all().delete()
 
@@ -87,13 +95,14 @@ class Command(BaseCommand):
             surname = slugify(self.clients_list[i]['surname'])
             name = slugify(self.clients_list[i]['name'])
             patronym = slugify(self.clients_list[i]['patronym'])
-            email = f"{surname}_{name[:1]}{patronym[:1]}@mail.ru"
+            email = f"{surname}_{name[:1]}{patronym[:1]}@test.ru"
 
             client = {
                 'email': email,
                 'surname': self.clients_list[i]['surname'],
                 'name': self.clients_list[i]['name'],
-                'patronym': self.clients_list[i]['patronym']
+                'patronym': self.clients_list[i]['patronym'],
+                'owner_id': self.clients_list[i]['owner_id'],
             }
             clients_obj_list.append(client)
 
@@ -103,6 +112,7 @@ class Command(BaseCommand):
                 'surname': 'Антонов',
                 'name': 'Иван',
                 'patronym': 'Иванович',
+                'owner_id': 1,
             })
         if env("MY_MAIL_2"):
             clients_obj_list.append({
@@ -110,6 +120,7 @@ class Command(BaseCommand):
                 'surname': 'Антонов',
                 'name': 'Игорь',
                 'patronym': 'Игоревич',
+                'owner_id': 1,
             })
         if env("MY_MAIL_3"):
             clients_obj_list.append({
@@ -117,6 +128,7 @@ class Command(BaseCommand):
                 'surname': 'Антонов',
                 'name': 'Сергей',
                 'patronym': 'Сергеевич',
+                'owner_id': 1,
             })
 
         Client.truncate()
@@ -127,12 +139,23 @@ class Command(BaseCommand):
         # --------Сообщения------------
         # -----------------------------
         message_obj_list = []
-        for i in range(len(self.subjects_list)):
+        half_count = int(len(self.subjects_list)/2)
+
+        for i in range(half_count):
             message = {
                 "subject": self.subjects_list[i],
                 "content": self.contents_list[i],
+                'owner_id': 2
             }
             message_obj_list.append(message)
+        for i in range(half_count, len(self.subjects_list)):
+            message = {
+                "subject": self.subjects_list[i],
+                "content": self.contents_list[i],
+                'owner_id': 3
+            }
+            message_obj_list.append(message)
+
         Message.truncate()
         message_create_list = [Message(**params) for params in message_obj_list]
         Message.objects.bulk_create(message_create_list)

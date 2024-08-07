@@ -2,8 +2,9 @@
 
 ### Настройки проекта
 + cоздать файл .env в корне проекта с настройками, аналогичными .env.example
-+ заполнение БД - ```python manage.py seed```
-+ запуск консольной периодической задачи ``python manage.py scheduler``
++ заполнение БД
+  * создание групп пользователей и пользователей ```python manage.py init_users```
+  * создание клиентов, сообщений и вспомогательных таблиц ```python manage.py seed```
 + для запуска встроенной периодической задачи выставить ``settings.SCHEDULER_ACTIVE = True``
 
 #### Модели (letters_sending/models.py)
@@ -33,3 +34,4 @@
 #### Скрипт рассылки
 ``letters_sending/management/commands/scheduler.py`` - консольная команда запуска периодической задачи
 
+``python manage.py scheduler`` - запуск консольной периодической задачи 

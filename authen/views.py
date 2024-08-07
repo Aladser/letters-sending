@@ -1,16 +1,19 @@
 from secrets import token_hex
 from urllib.request import Request
 
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
+from authen.services import CustomLoginRequiredMixin
 from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
@@ -21,7 +24,6 @@ class UserLoginView(LoginView):
 
     title = "авторизация"
     extra_context = {
-        'section': title,
         'header': title.title(),
         'title': title
     }
@@ -36,7 +38,6 @@ class RegisterView(CreateView):
 
     title = "регистрация пользователя"
     extra_context = {
-        'section': 'register',
         'header': title.title(),
         'title': title
     }
@@ -57,12 +58,15 @@ class RegisterView(CreateView):
                 (self.object.email,),
                 fail_silently=True
             )
+            header = 'Регистрация успешно завершена!'
+            description = 'Ссылка для подтверждения регистрации отправлена на вашу почту.'
+            return render(self.request, 'info.html', {'header': header, 'description': description})
 
         return super().form_valid(form)
 
 
 # ПРОФИЛЬ
-class ProfileView(UpdateView):
+class ProfileView(CustomLoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileForm
     template_name = 'user_form.html'
@@ -70,7 +74,6 @@ class ProfileView(UpdateView):
 
     title = "профиль пользователя"
     extra_context = {
-        'section': 'profile',
         'header': title.title(),
         'title': title
     }
@@ -95,9 +98,8 @@ def verificate_email(request: Request, token: str) -> HttpResponse:
 
     return render(
         request,
-        'information.html',
+        'info.html',
         {
-            'section': 'confirmation',
             'title': title,
             'header': title,
         }
@@ -118,3 +120,46 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = UserSetPasswordForm
     success_url = reverse_lazy('authen:password_reset_complete')
 
+
+# СПИСОК ПОЛЬЗОВАТЕЛЙ
+class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'authen.view_user'
+
+    model = User
+    template_name = "user/list.html"
+    title = 'список пользователей'
+    extra_context = {
+        'title': title,
+        'header': title.capitalize()
+    }
+
+
+# УСТАНОВИТЬ АКТИВНОСТЬ ПОЛЬЗОВАТЕЛЯ
+@login_required
+@permission_required('authen.activate_user')
+def set_user_activation(request):
+    """установить активность пользователя """
+
+    user = User.objects.filter(pk=request.POST['pk'])
+    if user.exists():
+        user = user.first()
+        title = 'ошибка блокировки пользовтеля'
+
+        # попытка заблокировать самого себя
+        if request.user == user:
+            return render(request, 'info.html',
+                          {'title': title, 'description': 'Вы пытаетесь заблокировать самого себя'})
+
+        # попытка заблокировать суперпользователя несуперпользователем
+        if user.is_superuser and user.is_active and not request.user.is_superuser:
+                return render(request,
+                              'info.html',
+                              {'title': title, 'description': 'Нельзя заблокировать суперпользователя'})
+
+        user.is_active = not user.is_active
+        user.save()
+        return redirect(reverse_lazy('authen:index'))
+    else:
+        return render(request,
+                      'info.html',
+                      {'title':'пользователь не найден', 'description':f'Пользователь с почтой {request.POST['email']} не найден'})

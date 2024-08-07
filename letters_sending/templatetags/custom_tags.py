@@ -36,3 +36,7 @@ def custom_status(status):
     else:
         return f"<div>{status}</div>"
 
+
+@register.filter()
+def activation_action(is_active):
+    return 'Блокировать' if is_active else 'Активировать'

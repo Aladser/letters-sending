@@ -8,6 +8,9 @@
         <div class="fw-bolder">Тема сообщения</div>
         <p class="border-2 border-bottom p-1">{{object.message}}</p>
 
+        <div class="fw-bolder">Автор</div>
+        <p class="border-2 border-bottom p-1">{{object.owner}}</p>
+
         <div class="fw-bolder">Клиенты</div>
         <div class="border-2 border-bottom p-1 mb-3">
             {% for client in object.clients.all %}<div>{{client}}</div>{% endfor %}

@@ -1,0 +1,8 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+    <div class="container mt-3">
+        <p class="fs-3 py-2 text-center">{{description}}</p>
+        <a href="{% url 'index' %}" class="btn-theme rounded mx-auto d-block w-25">Вернуться на главную</a>
+    </div>
+{% endblock %}

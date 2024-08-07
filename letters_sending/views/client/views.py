@@ -1,15 +1,13 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
 
 
-class ClientListView(ListView):
-    """LIST"""
-
+class ClientListView(CustomLoginRequiredMixin, ListView):
     model = Client
     template_name = "client/list.html"
     title = 'список клиентов'
@@ -20,8 +18,6 @@ class ClientListView(ListView):
 
 
 class ClientCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
-
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -33,6 +29,13 @@ class ClientCreateView(CustomLoginRequiredMixin, CreateView):
         'header': title.capitalize()
     }
 
+    def form_valid(self, form):
+        if form.is_valid():
+            self.object = form.save()
+            self.object.owner = self.request.user
+            self.object.save()
+        return super().form_valid(form)
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
@@ -42,8 +45,6 @@ class ClientCreateView(CustomLoginRequiredMixin, CreateView):
 
 
 class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
-
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -63,8 +64,6 @@ class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
 
 
 class ClientDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
-
     model = Client
     template_name = "confirm_delete.html"
     success_url = reverse_lazy('client_list')

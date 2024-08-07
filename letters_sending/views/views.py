@@ -1,9 +1,11 @@
 from django.db.models import Count
 from django.views.generic import ListView
+
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.models import Attempt, LettersSending
 
 
-class AttemptListView(ListView):
+class AttemptListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
 
     model = Attempt

@@ -1,18 +1,20 @@
 from datetime import datetime
 
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending
+from letters_sending.services.send_letters import send_letters
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
-from libs.send_letters import send_letters
 
 TEMPLATE_FOLDER = "letters_sending/"
 
 
-class LettersSendingListView(ListView):
+# СПИСОК РАССЫЛОК
+class LettersSendingListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
@@ -22,20 +24,37 @@ class LettersSendingListView(ListView):
         'css_list': ("letters_sending.css",)
     }
 
+    def get(self, *args, **kwargs):
+        if str(self.request.user) == 'AnonymousUser':
+            return redirect(reverse('authen:login'))
+        return super().get(*args, **kwargs)
 
-class LettersSendingDetailView(DetailView):
+    def get_queryset(self):
+        if self.request.user.has_perm('letters_sending.view_letterssending'):
+            return super().get_queryset()
+        else:
+            return super().get_queryset().filter(owner=self.request.user)
+
+
+# ДЕТАЛИ РАССЫЛКИ
+class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = LettersSending
-    template_name = TEMPLATE_FOLDER + "detail.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        title = f"рассылка №{self.object.pk}"
-        context['title'] = context['header'] = title
+    def get_context_data(self, **kwargs):
+        if not (self.request.user.has_perm('letters_sending.view_letterssending') or self.object.owner == self.request.user):
+            context = {'title': 'доступ запрещен', 'description': 'У вас нет доступа к этой рассылке'}
+            self.template_name = "info.html"
+        else:
+            context = super().get_context_data(**kwargs)
+            title = f"рассылка №{self.object.pk}"
+            context['title'] = context['header'] = title
+            self.template_name = TEMPLATE_FOLDER + "detail.html"
 
         return context
 
 
+# СОЗДАТЬ РАССЫЛКУ
 class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
     """CREATE"""
 
@@ -55,6 +74,7 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
             if self.object.status.name == "launched" and not self.object.first_sending:
                 self.object.first_sending = datetime.now()
             self.object.next_sending = self.object.first_sending
+            self.object.owner = self.request.user
             self.object.save()
 
             if self.object.status.name == "launched":
@@ -73,6 +93,7 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
         return reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
 
+# ОБНОВИТЬ РАССЫЛКУ
 class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
     """UPDATE"""
 
@@ -107,6 +128,7 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
         return context
 
 
+# УДАЛИТЬ РАССЫЛКУ
 class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
     """DELETE"""
 

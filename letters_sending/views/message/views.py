@@ -1,15 +1,15 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
 
 TEMPLATE_FOLDER = "message/"
 
 
-class MessageListView(ListView):
+class MessageListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"
@@ -20,7 +20,7 @@ class MessageListView(ListView):
     }
 
 
-class MessageDetailView(DetailView):
+class MessageDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = Message
     template_name = TEMPLATE_FOLDER + "detail.html"
@@ -53,6 +53,13 @@ class MessageCreateView(CustomLoginRequiredMixin, CreateView):
         context['back_url'] = reverse_lazy('message_list')
 
         return context
+
+    def form_valid(self, form):
+        if form.is_valid():
+            self.object = form.save()
+            self.object.owner = self.request.user
+            self.object.save()
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("message_detail", kwargs={"pk": self.object.pk})

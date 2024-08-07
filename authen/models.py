@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from config.settings import NULLABLE
+from libs.truncate_table_mixin import TruncateTableMixin
 
 
-class Country(models.Model):
+class Country(TruncateTableMixin, models.Model):
     name = models.CharField(max_length=30, verbose_name='Название')
     description = models.CharField(max_length=30, verbose_name='Описание')
 
@@ -15,7 +16,7 @@ class Country(models.Model):
         return self.description
 
 
-class User(AbstractUser):
+class User(TruncateTableMixin, AbstractUser):
     username = None
     email = models.EmailField(verbose_name='почта', unique=True)
     phone = models.CharField(verbose_name='телефон', unique=True, max_length=20, **NULLABLE)
@@ -36,6 +37,9 @@ class User(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
         ordering = ('first_name', 'last_name', 'email')
+        permissions = [
+            ('activate_user', 'Активировать'),
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.email
