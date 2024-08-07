@@ -11,7 +11,7 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('email', 'surname', 'name', 'patronym', "comment", 'owner')
+    list_display = ('email', 'surname', 'name', 'patronym', 'owner', "comment")
     search_fields = ('email', 'surname', 'name', 'patronym')
     ordering = ("email",)
 
