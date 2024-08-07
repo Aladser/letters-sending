@@ -30,7 +30,11 @@
                     <a href="{% url 'authen:login' %}" class="main-menu__item rounded">Войти</a>
                     <a href="{% url 'authen:register' %}" class="main-menu__item rounded">Регистрация</a>
                 {% endif %}
-                <a href="{% url 'authen:index' %}" class="main-menu__item rounded">Пользователи</a>
+
+                {% if perms.authen.view_user %}
+                    <a href="{% url 'authen:index' %}" class="main-menu__item rounded">Пользователи</a>
+                {% endif %}
+
 
                 <div class="text-light">-</div>
                 <a href="{% url 'letter_sending_list' %}" class="main-menu__item rounded">Рассылки</a>

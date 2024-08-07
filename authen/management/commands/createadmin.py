@@ -17,7 +17,7 @@ class Command(BaseCommand):
         Country.objects.bulk_create([Country(**param) for param in country_obj_list])
         russia_model = Country.objects.get(name='russia')
 
-        User.objects.all().delete()
+        User.truncate()
         user = User.objects.create(
             email='admin@test.ru',
             country=russia_model,

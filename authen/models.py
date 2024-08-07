@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from config.settings import NULLABLE
+from libs.truncate_table_mixin import TruncateTableMixin
 
 
 class Country(models.Model):
@@ -15,7 +16,7 @@ class Country(models.Model):
         return self.description
 
 
-class User(AbstractUser):
+class User(TruncateTableMixin, AbstractUser):
     username = None
     email = models.EmailField(verbose_name='почта', unique=True)
     phone = models.CharField(verbose_name='телефон', unique=True, max_length=20, **NULLABLE)
