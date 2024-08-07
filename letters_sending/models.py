@@ -16,6 +16,7 @@ class Message(TruncateTableMixin, models.Model):
         on_delete=models.CASCADE,
         related_name='messages',
         verbose_name='автор',
+        **NULLABLE
     )
 
     class Meta:
@@ -41,6 +42,7 @@ class Client(TruncateTableMixin, models.Model):
         on_delete=models.CASCADE,
         related_name='clients',
         verbose_name='автор',
+        **NULLABLE,
     )
 
     class Meta:
@@ -120,6 +122,7 @@ class LettersSending(models.Model):
         on_delete=models.CASCADE,
         related_name='sendings',
         verbose_name='автор',
+        **NULLABLE
     )
 
     class Meta:

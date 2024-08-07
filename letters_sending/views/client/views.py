@@ -33,6 +33,13 @@ class ClientCreateView(CustomLoginRequiredMixin, CreateView):
         'header': title.capitalize()
     }
 
+    def form_valid(self, form):
+        if form.is_valid():
+            self.object = form.save()
+            self.object.owner = self.request.user
+            self.object.save()
+        return super().form_valid(form)
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])

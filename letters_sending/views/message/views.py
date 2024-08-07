@@ -54,6 +54,13 @@ class MessageCreateView(CustomLoginRequiredMixin, CreateView):
 
         return context
 
+    def form_valid(self, form):
+        if form.is_valid():
+            self.object = form.save()
+            self.object.owner = self.request.user
+            self.object.save()
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
