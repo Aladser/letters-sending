@@ -1,10 +1,10 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
 
 
 class ClientListView(ListView):

@@ -4,7 +4,7 @@ from django_apscheduler.jobstores import DjangoJobStore
 
 from config.settings import DATETIME_FORMAT, SCHEDULER_INTERVAL
 from letters_sending.models import Status, LettersSending
-from libs.send_letters import send_letters
+from letters_sending.services.send_letters import send_letters
 
 
 class LettersSendingScheduler:

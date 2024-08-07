@@ -1,10 +1,10 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
 
 TEMPLATE_FOLDER = "message/"
 

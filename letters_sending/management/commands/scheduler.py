@@ -3,7 +3,7 @@ from time import sleep
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 from django.core.management import BaseCommand
 from config.settings import SCHEDULER_INTERVAL
-from libs.letsend_schedulrer import LettersSendingScheduler
+from letters_sending.services.letsend_schedulrer import LettersSendingScheduler
 
 
 class Command(BaseCommand):

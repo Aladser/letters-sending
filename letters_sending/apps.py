@@ -8,7 +8,7 @@ class LetterConfig(AppConfig):
     verbose_name = 'Рассылки'
 
     def ready(self):
-        from libs.letsend_schedulrer import LettersSendingScheduler
+        from letters_sending.services.letsend_schedulrer import LettersSendingScheduler
 
         print(f"ЗАПУСК ПРИЛОЖЕНИЯ {LetterConfig.name.upper()}")
         if SCHEDULER_ACTIVE:

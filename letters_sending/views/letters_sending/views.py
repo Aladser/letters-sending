@@ -3,11 +3,11 @@ from datetime import datetime
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending
 from libs.custom_formatter import CustomFormatter
-from libs.login_required_mixin import CustomLoginRequiredMixin
-from libs.send_letters import send_letters
+from letters_sending.services.send_letters import send_letters
 
 TEMPLATE_FOLDER = "letters_sending/"
 

@@ -21,7 +21,6 @@ class UserLoginView(LoginView):
 
     title = "авторизация"
     extra_context = {
-        'section': title,
         'header': title.title(),
         'title': title
     }
@@ -36,7 +35,6 @@ class RegisterView(CreateView):
 
     title = "регистрация пользователя"
     extra_context = {
-        'section': 'register',
         'header': title.title(),
         'title': title
     }
@@ -70,7 +68,6 @@ class ProfileView(UpdateView):
 
     title = "профиль пользователя"
     extra_context = {
-        'section': 'profile',
         'header': title.title(),
         'title': title
     }
@@ -97,7 +94,6 @@ def verificate_email(request: Request, token: str) -> HttpResponse:
         request,
         'information.html',
         {
-            'section': 'confirmation',
             'title': title,
             'header': title,
         }
