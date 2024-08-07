@@ -13,7 +13,7 @@ from django.views.generic import CreateView, UpdateView, ListView
 
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
-from authen.services import CustomLoginRequiredMixin
+from authen.services import CustomLoginRequiredMixin, show_error
 from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
@@ -136,29 +136,26 @@ class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
 
 # УСТАНОВИТЬ АКТИВНОСТЬ ПОЛЬЗОВАТЕЛЯ
 @login_required
+@permission_required('authen.block_user')
 def set_user_activation(request):
     """установить активность пользователя """
 
     user = User.objects.filter(pk=request.POST['pk'])
     if user.exists():
         user = user.first()
-        title = 'ошибка блокировки пользовтеля'
 
+        # попытка активации пользователя менеджером
+        if not request.user.is_superuser and not user.is_active:
+            return show_error(request, 'Недостаточно права для активации пользователя')
         # попытка заблокировать самого себя
         if request.user == user:
-            return render(request, 'info.html',
-                          {'title': title, 'description': 'Вы пытаетесь заблокировать самого себя'})
-
+            return show_error(request, 'Вы пытаетесь заблокировать самого себя')
         # попытка заблокировать суперпользователя несуперпользователем
         if user.is_superuser and user.is_active and not request.user.is_superuser:
-                return render(request,
-                              'info.html',
-                              {'title': title, 'description': 'Нельзя заблокировать суперпользователя'})
+            return show_error(request, 'Нельзя заблокировать суперпользователя')
 
         user.is_active = not user.is_active
         user.save()
         return redirect(reverse_lazy('authen:index'))
     else:
-        return render(request,
-                      'info.html',
-                      {'title':'пользователь не найден', 'description':f'Пользователь с почтой {request.POST['email']} не найден'})
+        return show_error(request, f'Пользователь с почтой {request.POST['email']} не найден')
