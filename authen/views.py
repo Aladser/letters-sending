@@ -1,6 +1,7 @@
 from secrets import token_hex
 from urllib.request import Request
 
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
@@ -12,6 +13,10 @@ from django.views.generic import CreateView, UpdateView, ListView
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
 from config.settings import APP_NAME, EMAIL_HOST_USER
+
+
+def e_handler403(request, exception):
+    return render(request, 'info.html', status=403, context={'title':'Доступ запрещен', 'description':f'Доступ запрещен.\n {exception}'})
 
 
 # АВТОРИЗАЦИЯ
@@ -95,7 +100,7 @@ def verificate_email(request: Request, token: str) -> HttpResponse:
 
     return render(
         request,
-        'information.html',
+        'info.html',
         {
             'title': title,
             'header': title,
@@ -119,10 +124,11 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
 
 
 # СПИСОК ПОЛЬЗОВАТЕЛЙ
-class UserListView(ListView):
+class UserListView(PermissionRequiredMixin, ListView):
     model = User
     template_name = "user/list.html"
     title = 'список пользователей'
+    permission_required = 'authen.view_user'
     extra_context = {
         'title': title,
         'header': title.capitalize()
