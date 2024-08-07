@@ -16,7 +16,7 @@
                 <td class="align-middle">{{user_obj.email}}</td>
                 <td class="align-middle">{{user_obj.first_name}}</td>
                 <td class="align-middle">{{user_obj.last_name}}</td>
-                <td class="text-end">
+                <td class="text-end w-25">
                     {% if user == user_obj %}
                         <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Это вы</span>
                     {% elif not user_obj.is_superuser%}
@@ -30,7 +30,7 @@
                             </form>
                         {% endif %}
                     {% else %}
-                        <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Суперпользователь</span>
+                        <span class="d-block float-end text-center fw-bolder text-secondary">Суперпользователь</span>
                     {% endif %}
                 </td>
             </tr>

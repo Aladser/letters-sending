@@ -7,14 +7,8 @@
             <form method="post" enctype="multipart/form-data" class="form-floating">
                 {% csrf_token %}
                 {{ form.as_p }}
-
-                {% if section == 'register'%}
-                <button type="submit" class="btn-theme border-0 w-25 rounded">Регистрация</button>
-                {% else %}
-                <button type="submit" class="btn-theme border-0 w-25 rounded">Сохранить</button>
-                {% endif %}
-
-                <a href="{% url 'index' %}" class="btn-theme btn-my-link w-25 rounded">На главную</a>
+                <button type="submit" class="btn-theme border-0 w-25 rounded">Отправить</button>
+                <a href="{% url 'authen:login' %}" class="btn-theme rounded btn-my-link w-25">Войти</a>
             </form>
         </div>
     </div>
