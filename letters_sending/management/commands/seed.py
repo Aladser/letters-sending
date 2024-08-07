@@ -70,9 +70,6 @@ class Command(BaseCommand):
         if User.objects.all().count() == 0:
             raise Exception('Пользователи не найдены')
 
-        user_pk = User.objects.get(email='user@test.ru').pk
-        manager_pk = User.objects.get(email='manager@test.ru').pk
-
         LettersSending.objects.all().delete()
         Attempt.objects.all().delete()
 
@@ -109,10 +106,6 @@ class Command(BaseCommand):
             }
             clients_obj_list.append(client)
 
-        Client.truncate()
-        client_create_list = [Client(**params) for params in clients_obj_list]
-        Client.objects.bulk_create(client_create_list)
-
         if env("MY_MAIL_1"):
             clients_obj_list.append({
                 'email': env("MY_MAIL_1"),
@@ -137,6 +130,10 @@ class Command(BaseCommand):
                 'patronym': 'Сергеевич',
                 'owner_id': 1,
             })
+
+        Client.truncate()
+        client_create_list = [Client(**params) for params in clients_obj_list]
+        Client.objects.bulk_create(client_create_list)
 
         # -----------------------------
         # --------Сообщения------------

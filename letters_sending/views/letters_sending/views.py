@@ -61,6 +61,7 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
             if self.object.status.name == "launched" and not self.object.first_sending:
                 self.object.first_sending = datetime.now()
             self.object.next_sending = self.object.first_sending
+            self.object.owner = self.request.user
             self.object.save()
 
             if self.object.status.name == "launched":

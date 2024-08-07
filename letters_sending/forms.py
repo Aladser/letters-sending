@@ -49,7 +49,7 @@ class LettersSendingUpdateForm(GeneralForm):
 class MessageForm(GeneralForm):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ('subject', 'content')
 
 
 class ClientForm(GeneralForm):

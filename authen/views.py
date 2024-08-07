@@ -15,10 +15,6 @@ from authen.models import User
 from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
-def e_handler403(request, exception):
-    return render(request, 'info.html', status=403, context={'title':'Доступ запрещен', 'description':f'Доступ запрещен.\n {exception}'})
-
-
 # АВТОРИЗАЦИЯ
 class UserLoginView(LoginView):
     template_name = 'login.html'
@@ -125,10 +121,11 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
 
 # СПИСОК ПОЛЬЗОВАТЕЛЙ
 class UserListView(PermissionRequiredMixin, ListView):
+    permission_required = 'authen.view_user'
+
     model = User
     template_name = "user/list.html"
     title = 'список пользователей'
-    permission_required = 'authen.view_user'
     extra_context = {
         'title': title,
         'header': title.capitalize()
