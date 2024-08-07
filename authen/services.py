@@ -10,7 +10,7 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
     redirect_field_name = 'redirect_to'
 
 
-def e_handler403(request, exception):
+def e_handler403(request, exception = None):
     """верстка ошибки 403"""
 
     return render(request,

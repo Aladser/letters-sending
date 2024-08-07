@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView
 
@@ -130,3 +130,32 @@ class UserListView(PermissionRequiredMixin, ListView):
         'title': title,
         'header': title.capitalize()
     }
+
+
+# УСТАНОВИТЬ АКТИВНОСТЬ ПОЛЬЗОВАТЕЛЯ
+def set_user_activation(request):
+    """установить активность пользователя """
+
+    user = User.objects.filter(pk=request.POST['pk'])
+    if user.exists():
+        user = user.first()
+        title = 'ошибка блокировки пользовтеля'
+
+        # попытка заблокировать самого себя
+        if request.user == user:
+            return render(request, 'info.html',
+                          {'title': title, 'description': 'Вы пытаетесь заблокировать самого себя'})
+
+        # попытка заблокировать суперпользователя несуперпользователем
+        if user.is_superuser and user.is_active and not request.user.is_superuser:
+                return render(request,
+                              'info.html',
+                              {'title': title, 'description': 'Нельзя заблокировать суперпользователя'})
+
+        user.is_active = not user.is_active
+        user.save()
+        return redirect(reverse_lazy('authen:index'))
+    else:
+        return render(request,
+                      'info.html',
+                      {'title':'пользователь не найден', 'description':f'Пользователь с почтой {request.POST['email']} не найден'})
