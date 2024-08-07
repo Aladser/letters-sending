@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin
@@ -21,6 +22,11 @@ class LettersSendingListView(ListView):
         'header': "cписок рассылок",
         'css_list': ("letters_sending.css",)
     }
+
+    def get(self, *args, **kwargs):
+        if str(self.request.user) == 'AnonymousUser':
+            return redirect(reverse('authen:login'))
+        return super().get(*args, **kwargs)
 
 
 class LettersSendingDetailView(DetailView):
