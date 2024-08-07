@@ -4,7 +4,7 @@ from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
 
-class Country(models.Model):
+class Country(TruncateTableMixin, models.Model):
     name = models.CharField(max_length=30, verbose_name='Название')
     description = models.CharField(max_length=30, verbose_name='Описание')
 
