@@ -7,9 +7,7 @@ from letters_sending.models import Client
 from libs.custom_formatter import CustomFormatter
 
 
-class ClientListView(ListView):
-    """LIST"""
-
+class ClientListView(CustomLoginRequiredMixin, ListView):
     model = Client
     template_name = "client/list.html"
     title = 'список клиентов'
@@ -20,8 +18,6 @@ class ClientListView(ListView):
 
 
 class ClientCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
-
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -49,8 +45,6 @@ class ClientCreateView(CustomLoginRequiredMixin, CreateView):
 
 
 class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
-
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -70,8 +64,6 @@ class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
 
 
 class ClientDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
-
     model = Client
     template_name = "confirm_delete.html"
     success_url = reverse_lazy('client_list')

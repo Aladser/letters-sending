@@ -9,7 +9,7 @@ from libs.custom_formatter import CustomFormatter
 TEMPLATE_FOLDER = "message/"
 
 
-class MessageListView(ListView):
+class MessageListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"
@@ -20,7 +20,7 @@ class MessageListView(ListView):
     }
 
 
-class MessageDetailView(DetailView):
+class MessageDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = Message
     template_name = TEMPLATE_FOLDER + "detail.html"

@@ -14,7 +14,7 @@ TEMPLATE_FOLDER = "letters_sending/"
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(ListView):
+class LettersSendingListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
@@ -37,7 +37,7 @@ class LettersSendingListView(ListView):
 
 
 # ДЕТАЛИ РАССЫЛКИ
-class LettersSendingDetailView(DetailView):
+class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = LettersSending
 

@@ -1,6 +1,7 @@
 from secrets import token_hex
 from urllib.request import Request
 
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
@@ -12,6 +13,7 @@ from django.views.generic import CreateView, UpdateView, ListView
 
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
+from authen.services import CustomLoginRequiredMixin
 from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
@@ -64,7 +66,7 @@ class RegisterView(CreateView):
 
 
 # ПРОФИЛЬ
-class ProfileView(UpdateView):
+class ProfileView(CustomLoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileForm
     template_name = 'user_form.html'
@@ -120,7 +122,7 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
 
 
 # СПИСОК ПОЛЬЗОВАТЕЛЙ
-class UserListView(PermissionRequiredMixin, ListView):
+class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'authen.view_user'
 
     model = User
@@ -133,6 +135,8 @@ class UserListView(PermissionRequiredMixin, ListView):
 
 
 # УСТАНОВИТЬ АКТИВНОСТЬ ПОЛЬЗОВАТЕЛЯ
+@login_required
+@permission_required('authen.activate_user')
 def set_user_activation(request):
     """установить активность пользователя """
 
