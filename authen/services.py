@@ -10,12 +10,10 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
     redirect_field_name = 'redirect_to'
 
 
-def show_error(request, message: str):
+def show_error(request, exception, status=None):
     """Выводит ошибку на страницу"""
-    return render(
-        request,
-        'info.html',
-        {'title': 'ошибка', 'description': message})
+
+    return render(request,'info.html',{'title': 'ошибка', 'description': exception})
 
 
 def e_handler403(request, exception=None):
