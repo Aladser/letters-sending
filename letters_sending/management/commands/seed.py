@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from pytils.translit import slugify
-from config import env
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
+from libs.env import env
 
 
 class Command(BaseCommand):

@@ -99,11 +99,14 @@ class LettersSending(models.Model):
     )
     first_sending = models.DateTimeField(verbose_name="Дата и время первой отправки", **NULLABLE)
     next_sending = models.DateTimeField(verbose_name="Дата и время следующей отправки", **NULLABLE)
+    is_active = models.BooleanField(verbose_name='Активность', default=True)
 
     class Meta:
         verbose_name = "Почтовая рассылка"
         verbose_name_plural = "почтовые рассылки"
-        ordering = ("pk",)
+        permissions = [
+            ('activate_letterssending', 'Активировать'),
+        ]
 
     def __str__(self):
         clients_list = ", ".join([client.email for client in self.clients.all()])

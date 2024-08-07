@@ -2,26 +2,28 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
-from blog.models import Blog
-from product.models import Product
+from authen.models import User
+from letters_sending.models import LettersSending
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        # Группа модераторов товаров
-        product_moderators_group, created = Group.objects.get_or_create(name='product_moderator')
-        product_content_type = ContentType.objects.get_for_model(Product)
+        Group.objects.all().delete()
 
-        cancel_publication_permission = Permission.objects.get(codename='cancel_publication', content_type=product_content_type)
-        edit_description_permission = Permission.objects.get(codename='edit_description', content_type=product_content_type)
-        edit_category_permission = Permission.objects.get(codename='edit_category', content_type=product_content_type)
+        # Группа менеджеров
+        interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
 
-        product_moderators_group.permissions.add(cancel_publication_permission)
-        product_moderators_group.permissions.add(edit_description_permission)
-        product_moderators_group.permissions.add(edit_category_permission)
+        letters_sending_content_type = ContentType.objects.get_for_model(LettersSending)
+        view_letterssending_perm = Permission.objects.get(
+            codename='view_letterssending', content_type=letters_sending_content_type)
+        activate_letterssending_perm = Permission.objects.get(
+            codename='activate_letterssending', content_type=letters_sending_content_type)
 
-        # группа контент-менеджеров
-        content_managers_group, created = Group.objects.get_or_create(name='content_manager')
-        blog_content_type = ContentType.objects.get_for_model(Blog)
-        set_publication_permission = Permission.objects.get(codename='set_publication', content_type=blog_content_type)
-        content_managers_group.permissions.add( set_publication_permission)
+        user_content_type = ContentType.objects.get_for_model(User)
+        view_user_perm = Permission.objects.get(codename='view_user', content_type=user_content_type)
+        activate_user_perm = Permission.objects.get(codename='activate_user', content_type=user_content_type)
+
+        interface_managers_group.permissions.add(view_letterssending_perm)
+        interface_managers_group.permissions.add(activate_letterssending_perm)
+        interface_managers_group.permissions.add(view_user_perm)
+        interface_managers_group.permissions.add(activate_user_perm)

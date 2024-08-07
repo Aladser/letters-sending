@@ -36,6 +36,9 @@ class User(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
         ordering = ('first_name', 'last_name', 'email')
+        permissions = [
+            ('activate_user', 'Активировать'),
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.email
