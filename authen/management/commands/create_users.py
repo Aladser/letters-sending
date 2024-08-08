@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
 from authen.models import User, Country
+from blog.models import Blog
 from letters_sending.models import LettersSending, Client, Message
 
 
@@ -41,6 +42,17 @@ class Command(BaseCommand):
             Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type)
         )
         [users_group.permissions.add(perm) for perm in user_permissions]
+
+        # Группа блогеров
+        blog_content_type = ContentType.objects.get_for_model(Blog)
+        blogers_group, created = Group.objects.get_or_create(name='bloger')
+        bloger_permissions = (
+            Permission.objects.get(codename='view_blog', content_type=blog_content_type),
+            Permission.objects.get(codename='add_blog', content_type=blog_content_type),
+            Permission.objects.get(codename='change_blog', content_type=blog_content_type),
+            Permission.objects.get(codename='delete_blog', content_type=blog_content_type),
+        )
+        [blogers_group.permissions.add(perm) for perm in bloger_permissions]
 
         # страны пользователей
         country_obj_list = [
@@ -90,4 +102,16 @@ class Command(BaseCommand):
 
         user.set_password("manager@123")
         user.groups.add(interface_managers_group)
+        user.save()
+
+        # блогер
+        user = User.objects.create(
+            email='bloger@test.ru',
+            country=russia_model,
+            first_name='Блогер',
+            last_name='Великий'
+        )
+
+        user.set_password("bloger@123")
+        user.groups.add(blogers_group)
         user.save()

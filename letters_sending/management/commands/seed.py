@@ -2,6 +2,7 @@ from django.core.management import BaseCommand
 from pytils.translit import slugify
 
 from authen.models import User
+from blog.models import Blog
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
 from libs.env import env
 
@@ -66,12 +67,23 @@ class Command(BaseCommand):
         'То, что вы видите — не финальная версия РыбаТекста. Мы планируем развивать сервис, и для этого нам нужна обратная связь от вас, ваши советы и пожелания.'
     ]
 
+    # Блоги
+    blog_header_list = ['Белорусские новости', 'Женитьба', 'Милиционер', 'Солдаты', 'Тендер на строительство здания']
+    blog_content_list = [
+        'Белорусские новости: «Александр Григорьевич Лукашенко заявил, что он не хочет больше быть президентом. Коронация назначена на вторник».',
+        'Один бизнесмен хотел жениться, но у него было три подружки, и он не знал какую из них выбрать. Решил их проверить: дал каждой по 1000 долларов. Одна потратила все деньги на себя, другая купила что-то для хозяйства, а третья вложила в дело и получила прибыль. Какую же из трех он выбрал? Ту, у которой грудь больше!',
+        'Штирлиц проснулся в камере. Как сюда попал, не помнит. Думает: «Если войдут русские, скажу, что я полковник Исаев. Если немцы – штандартенфюрер Штирлиц». Входит милиционер: -Ну, и напились Вы вчера, товарищ Тихонов!',
+        'Разговаривают два солдатика. - Слушай, давай над лейтенантом приколемся. - Ага, над деканом уже прикололись…',
+        'В Москве проходит тендер на строительство здания. Проект представляет немецкая компания. Смета 10 миллионов. Затем турецкая компания – 5 миллионов. Подходит черед российской компании. У них смета 15 миллионов. - Почему так много? - Ну, как же? 5 миллионов нам, 5 миллионов вам и 5 туркам, чтобы строили. И они выигрывают тендер!'
+    ]
+
     def handle(self, *args, **kwargs):
         if User.objects.all().count() == 0:
             raise Exception('Пользователи не найдены')
 
         LettersSending.objects.all().delete()
         Attempt.objects.all().delete()
+
 
         # -----------------------------
         # ----Периодичность рассылки---
@@ -80,12 +92,14 @@ class Command(BaseCommand):
         period_create_list = [DatePeriod(**params) for params in self.period_list]
         DatePeriod.objects.bulk_create(period_create_list)
 
+
         # -----------------------------
         # -------Статус рассылки-------
         # -----------------------------
         Status.objects.all().delete()
         status_create_list = [Status(**params) for params in self.status_list]
         Status.objects.bulk_create(status_create_list)
+
 
         # -----------------------------
         # ------------Клиенты----------
@@ -135,6 +149,7 @@ class Command(BaseCommand):
         client_create_list = [Client(**params) for params in clients_obj_list]
         Client.objects.bulk_create(client_create_list)
 
+
         # -----------------------------
         # --------Сообщения------------
         # -----------------------------
@@ -159,3 +174,23 @@ class Command(BaseCommand):
         Message.truncate()
         message_create_list = [Message(**params) for params in message_obj_list]
         Message.objects.bulk_create(message_create_list)
+
+
+        # -----------------------------
+        # --------Блоги------------
+        # -----------------------------
+        blog_obj_list = []
+        for i in range(len(self.blog_header_list)):
+            blog = {
+                'header': self.blog_header_list[i],
+                'content': self.blog_content_list[i],
+            }
+            blog_obj_list.append(blog)
+
+        blog_obj_list[0]['image'] = 'images/a1.jpg'
+        blog_obj_list[1]['image'] = 'images/a2.jpg'
+        blog_obj_list[2]['image'] = 'images/a3.jpg'
+
+        Blog.truncate()
+        blog_create_list = [Blog(**params) for params in blog_obj_list]
+        Blog.objects.bulk_create(blog_create_list)
