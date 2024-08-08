@@ -66,6 +66,7 @@ class Command(BaseCommand):
         Country.objects.bulk_create([Country(**param) for param in country_obj_list])
         russia_model = Country.objects.get(name='russia')
 
+        admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
         # суперпользователь
         User.truncate()
         user = User.objects.create(
@@ -97,11 +98,13 @@ class Command(BaseCommand):
             email='manager@test.ru',
             country=russia_model,
             first_name='Менеджер',
-            last_name='Интерфейса'
+            last_name='Интерфейса',
+            is_staff = True
         )
 
         user.set_password("manager@123")
         user.groups.add(interface_managers_group)
+        user.user_permissions.add(admin_panel_perm)
         user.save()
 
         # блогер
@@ -109,9 +112,11 @@ class Command(BaseCommand):
             email='bloger@test.ru',
             country=russia_model,
             first_name='Блогер',
-            last_name='Великий'
+            last_name='Великий',
+            is_staff=True
         )
 
         user.set_password("bloger@123")
         user.groups.add(blogers_group)
+        user.user_permissions.add(admin_panel_perm)
         user.save()

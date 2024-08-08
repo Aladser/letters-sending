@@ -39,6 +39,7 @@ class User(TruncateTableMixin, AbstractUser):
         ordering = ('first_name', 'last_name', 'email')
         permissions = [
             ('block_user', 'Блокировать'),
+            ('view_admin_panel', 'Доступ к админ.панель')
         ]
 
     def __str__(self):
