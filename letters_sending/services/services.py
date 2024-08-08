@@ -16,3 +16,20 @@ class OwnerVerificationMixin:
             return show_error(request, 'Доступ запрещен')
 
         return super().post(request, *args, **kwargs)
+
+
+class OwnerListVerificationMixin:
+    """Миксин проверки права пользователя на просмотр списка объектов"""
+
+    list_permission = None
+    """права просмотра списка объектов"""
+    def get_queryset(self):
+        """Возвращает список бъектов с учетом права пользователя на просмотр """
+
+        if self.list_permission is not None:
+            if self.request.user.has_perm(self.list_permission):
+                return super().get_queryset()
+            else:
+                return super().get_queryset().filter(owner=self.request.user)
+        else:
+            return super().get_queryset()

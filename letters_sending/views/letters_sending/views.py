@@ -11,13 +11,16 @@ from authen.services import CustomLoginRequiredMixin, show_error
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
+from letters_sending.services.services import OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "letters_sending/"
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(CustomLoginRequiredMixin, ListView):
+class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_letterssending'
+
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
     extra_context = {
@@ -30,12 +33,6 @@ class LettersSendingListView(CustomLoginRequiredMixin, ListView):
         if str(self.request.user) == 'AnonymousUser':
             return redirect(reverse('authen:login'))
         return super().get(*args, **kwargs)
-
-    def get_queryset(self):
-        if self.request.user.has_perm('letters_sending.view_letterssending'):
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(owner=self.request.user)
 
 
 # ДЕТАЛИ РАССЫЛКИ

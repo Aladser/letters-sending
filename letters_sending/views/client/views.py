@@ -5,12 +5,14 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
-from letters_sending.services.services import OwnerVerificationMixin
+from letters_sending.services.services import OwnerVerificationMixin, OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 
 # СПИСОК КЛИЕНТОВ
-class ClientListView(CustomLoginRequiredMixin, ListView):
+class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_client'
+
     model = Client
     template_name = "client/list.html"
     title = 'Cписок клиентов'
@@ -18,12 +20,6 @@ class ClientListView(CustomLoginRequiredMixin, ListView):
         'title': title,
         'header': title
     }
-
-    def get_queryset(self):
-        if self.request.user.has_perm('letters_sending.view_client'):
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(owner=self.request.user)
 
 # СОЗДАТЬ КЛИЕНТА
 class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):

@@ -5,14 +5,16 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
+from letters_sending.services.services import OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
 
 
 # СПИСОК СООБЩЕНИЙ
-class MessageListView(CustomLoginRequiredMixin, ListView):
-    """LIST"""
+class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_message'
+
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"
     title = 'список сообщений'
@@ -21,16 +23,9 @@ class MessageListView(CustomLoginRequiredMixin, ListView):
         'header': title.capitalize()
     }
 
-    def get_queryset(self):
-        if self.request.user.has_perm('letters_sending.view_message'):
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(owner=self.request.user)
-
 
 # ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):
-    """DETAIL"""
     model = Message
     template_name = TEMPLATE_FOLDER + "detail.html"
 
