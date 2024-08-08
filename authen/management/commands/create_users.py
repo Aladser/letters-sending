@@ -16,6 +16,8 @@ class Command(BaseCommand):
         letters_sending_content_type = ContentType.objects.get_for_model(LettersSending)
         user_content_type = ContentType.objects.get_for_model(User)
 
+        admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
+
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
         interface_manager_permissions = (
@@ -24,7 +26,8 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='view_user', content_type=user_content_type),
             Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='block_user', content_type=user_content_type)
+            Permission.objects.get(codename='block_user', content_type=user_content_type),
+            admin_panel_perm
         )
         [interface_managers_group.permissions.add(perm) for perm in interface_manager_permissions]
 
@@ -51,6 +54,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='add_blog', content_type=blog_content_type),
             Permission.objects.get(codename='change_blog', content_type=blog_content_type),
             Permission.objects.get(codename='delete_blog', content_type=blog_content_type),
+            admin_panel_perm
         )
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]
 
@@ -66,7 +70,7 @@ class Command(BaseCommand):
         Country.objects.bulk_create([Country(**param) for param in country_obj_list])
         russia_model = Country.objects.get(name='russia')
 
-        admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
+
         # суперпользователь
         User.truncate()
         user = User.objects.create(
@@ -104,7 +108,6 @@ class Command(BaseCommand):
 
         user.set_password("manager@123")
         user.groups.add(interface_managers_group)
-        user.user_permissions.add(admin_panel_perm)
         user.save()
 
         # блогер
@@ -118,5 +121,4 @@ class Command(BaseCommand):
 
         user.set_password("bloger@123")
         user.groups.add(blogers_group)
-        user.user_permissions.add(admin_panel_perm)
         user.save()
