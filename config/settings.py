@@ -18,6 +18,7 @@ INSTALLED_APPS = [
 
     "letters_sending",
     'authen',
+    'blog'
 ]
 
 MIDDLEWARE = [

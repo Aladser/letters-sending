@@ -10,5 +10,6 @@ handler403 = e_handler403
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('user/', include('authen.urls', namespace='authen')),
+    path('blog/', include('blog.urls', namespace='blog')),
     path('', include('letters_sending.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)

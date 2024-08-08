@@ -1,0 +1,23 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+<div class="d-flex flex-wrap mb-2">
+    {% for object in object_list%}
+        <div class="border border-2 mb-1 me-1" style="width: 20rem;">
+          <div class="h-50">
+              <img src="{{object.image|full_image_path}}" class="card-img-top h-100" alt="{{object.image}}">
+          </div>
+          <div class="h-50 d-flex flex-column justify-content-between p-2">
+            <h5 class="card-title" title="{{object.header}}">{{object.header|truncatechars:25}}</h5>
+            <p class="card-text">{{object.content|truncatechars:100}}</p>
+            <div class="card-text text-center fst-italic">Публикация: {{object.published_at}}</div>
+            <div class="card-text text-center fst-italic">Просмотров: {{object.views_count}}</div>
+            <a href="{% url 'blog:detail' object.pk %}" class="btn-theme rounded d-block w-50 mx-auto">Подробнее</a>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

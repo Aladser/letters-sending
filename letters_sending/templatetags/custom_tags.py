@@ -40,3 +40,10 @@ def custom_status(status):
 @register.filter()
 def activation_action(is_active):
     return 'Блокировать' if is_active else 'Активировать'
+
+@register.filter()
+def full_image_path(image_file):
+    if image_file != '' and os.path.isfile(BASE_DIR / MEDIA_URL.replace('/', '') / str(image_file)):
+        return MEDIA_URL + str(image_file)
+    else:
+        return STATIC_URL + "empty_file.png"

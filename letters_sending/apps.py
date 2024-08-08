@@ -5,7 +5,7 @@ from config.settings import SCHEDULER_ACTIVE
 class LetterConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'letters_sending'
-    verbose_name = 'Рассылки'
+    verbose_name = 'Почтовые рассылки'
 
     def ready(self):
         from letters_sending.services.letsend_schedulrer import LettersSendingScheduler
