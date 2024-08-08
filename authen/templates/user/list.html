@@ -2,7 +2,6 @@
 {% load custom_tags %}
 
 {% block content %}
-    {{user.perms}}
     <table class="table shadow">
         <tr>
             <th>Почта</th>
@@ -20,7 +19,7 @@
                     {% if user == user_obj %}
                         <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Это вы</span>
                     {% elif not user_obj.is_superuser%}
-                        <!-- блокировать пользователя с правом блокировки или активировать пользователя суперпользователем -->
+                        <!-- блокировать пользователя, имея право блокировки, или активировать пользователя суперпользователем -->
                         {% if perms.authen.block_user and user_obj.is_active or user.is_superuser and not user_obj.is_active %}
                             <form method="post" action="{% url 'authen:set-activation' %}">
                                 {% csrf_token %}
@@ -28,6 +27,8 @@
                                 <input type="hidden" name="email" value={{user_obj.email}}>
                                 <button type="submit" class="btn-theme w-50 border-0 rounded p-1 ">{{user_obj.is_active|activation_action}}</button>
                             </form>
+                        {% elif not user_obj.is_active %}
+                            <span class="d-block w-50 float-end text-center fw-bolder text-secondary">Неактивен</span>
                         {% endif %}
                     {% else %}
                         <span class="d-block float-end text-center fw-bolder text-secondary">Суперпользователь</span>

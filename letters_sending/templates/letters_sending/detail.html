@@ -31,7 +31,7 @@
 
     <div class="mb-2">
         {% if perms.letters_sending.deactivate_letterssending and object.status.name == 'launched' %}
-            <form method="post" action="{% url 'deactivate-letterssending' %}" class="mb-3">
+            <form method="post" action="{% url 'deactivate-sending' %}" class="mb-3">
                 {% csrf_token %}
                 <input type="hidden" name="pk" value={{object.pk}}>
                 <button type="submit" class="btn-theme border-0 rounded px-3 py-2 w-100">Выключить рассылку</button>

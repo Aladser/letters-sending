@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -148,10 +147,11 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
         return context
 
 
+# ВЫКЛЮЧИТЬ АКТИВНУЮ РАССЫЛКУ
 @login_required
-@permission_required('deactivate_letterssending')
+@permission_required('letters_sending.deactivate_letterssending')
 def deactivate_letterssending(request):
-    """Выключить действующую рассылку"""
+    """Выключить активную рассылку"""
 
     sending = LettersSending.objects.filter(pk=request.POST['pk'])
     if sending.exists():
