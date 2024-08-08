@@ -31,13 +31,21 @@
 
     <div class="mb-2">
         {% if perms.letters_sending.deactivate_letterssending and object.status.name == 'launched' %}
-            <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Отключить рассылку</a>
+            <form method="post" action="{% url 'deactivate-letterssending' %}" class="mb-3">
+                {% csrf_token %}
+                <input type="hidden" name="pk" value={{object.pk}}>
+                <button type="submit" class="btn-theme border-0 rounded px-3 py-2 w-100">Выключить рассылку</button>
+            </form>
         {% endif %}
         {% if perms.letters_sending.change_message or user == object.owner %}
             <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Изменить</a>
         {% endif %}
         {% if perms.letters_sending.delete_message or user == object.owner %}
-            <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+            {% if object.status.name != 'launched'%}
+                <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+            {% else %}
+                <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded link-disabled">Удалить</a>
+            {% endif %}
         {% endif %}
         {% if perms.letters_sending.delete_message %}
         {% endif %}

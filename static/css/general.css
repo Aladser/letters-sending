@@ -102,3 +102,10 @@ html {
 .auth-user-link:hover{
     background-color: #3583a1;
 }
+
+/* неактивная ссылка */
+.link-disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}

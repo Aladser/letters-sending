@@ -1,12 +1,14 @@
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from authen.services import CustomLoginRequiredMixin
+from authen.services import CustomLoginRequiredMixin, show_error
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
-from letters_sending.models import LettersSending
+from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from libs.custom_formatter import CustomFormatter
 
@@ -40,7 +42,8 @@ class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
     model = LettersSending
 
     def get_context_data(self, **kwargs):
-        if not (self.request.user.has_perm('letters_sending.view_letterssending') or self.object.owner == self.request.user):
+        if not (self.request.user.has_perm(
+                'letters_sending.view_letterssending') or self.object.owner == self.request.user):
             context = {'title': 'доступ запрещен', 'description': 'У вас нет доступа к этой рассылке'}
             self.template_name = "info.html"
         else:
@@ -139,3 +142,23 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
         return context
+
+
+@login_required
+@permission_required('deactivate_letterssending')
+def deactivate_letterssending(request):
+    """Выключить действующую рассылку"""
+
+    sending = LettersSending.objects.filter(pk=request.POST['pk'])
+    if sending.exists():
+        sending = sending.first()
+
+        # если рассылка не запущена
+        if sending.status.name == 'launched':
+            sending.status = Status.objects.get(name='completed')
+            sending.save()
+            return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
+        else:
+            return show_error(request, f'Ошибка: рассылка не запущена')
+    else:
+        return show_error(request, f'Ошибка: рассылка не найдена')
