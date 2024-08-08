@@ -29,12 +29,19 @@
         <p class="border-2 border-bottom p-1">{{object.status}}</p>
     </div>
 
-    {% if user.is_authenticated %}
     <div class="mb-2">
-        <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Изменить</a>
-        <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+        {% if perms.letters_sending.deactivate_letterssending and object.status.name == 'launched' %}
+            <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Отключить рассылку</a>
+        {% endif %}
+        {% if perms.letters_sending.change_message or user == object.owner %}
+            <a href="{% url 'letter_sending_edit' object.pk %}" class="btn-theme rounded">Изменить</a>
+        {% endif %}
+        {% if perms.letters_sending.delete_message or user == object.owner %}
+            <a href="{% url 'letter_sending_delete' object.pk %}" class="btn-theme rounded">Удалить</a>
+        {% endif %}
+        {% if perms.letters_sending.delete_message %}
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 {% endblock %}

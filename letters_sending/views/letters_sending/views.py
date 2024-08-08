@@ -15,7 +15,6 @@ TEMPLATE_FOLDER = "letters_sending/"
 
 # СПИСОК РАССЫЛОК
 class LettersSendingListView(CustomLoginRequiredMixin, ListView):
-    """LIST"""
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
     extra_context = {
@@ -38,7 +37,6 @@ class LettersSendingListView(CustomLoginRequiredMixin, ListView):
 
 # ДЕТАЛИ РАССЫЛКИ
 class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
-    """DETAIL"""
     model = LettersSending
 
     def get_context_data(self, **kwargs):
@@ -56,8 +54,6 @@ class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
 
 # СОЗДАТЬ РАССЫЛКУ
 class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
-
     model = LettersSending
     template_name = "form.html"
     form_class = LettersSendingCreateForm
@@ -95,8 +91,6 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
 
 # ОБНОВИТЬ РАССЫЛКУ
 class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
-
     model = LettersSending
     template_name = "form.html"
     form_class = LettersSendingUpdateForm
@@ -130,8 +124,6 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
 
 # УДАЛИТЬ РАССЫЛКУ
 class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
-
     model = LettersSending
     template_name = "confirm_delete.html"
     success_url = reverse_lazy('letter_sending_list')

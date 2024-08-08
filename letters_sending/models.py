@@ -129,7 +129,7 @@ class LettersSending(models.Model):
         verbose_name = "Почтовая рассылка"
         verbose_name_plural = "почтовые рассылки"
         permissions = [
-            ('activate_letterssending', 'Активировать'),
+            ('deactivate_letterssending', 'Выключить рассылку'),
         ]
 
     def __str__(self):
