@@ -21,6 +21,12 @@ class MessageListView(CustomLoginRequiredMixin, ListView):
         'header': title.capitalize()
     }
 
+    def get_queryset(self):
+        if self.request.user.has_perm('letters_sending.view_message'):
+            return super().get_queryset()
+        else:
+            return super().get_queryset().filter(owner=self.request.user)
+
 
 # ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):

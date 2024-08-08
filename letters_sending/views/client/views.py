@@ -20,8 +20,7 @@ class ClientListView(CustomLoginRequiredMixin, ListView):
     }
 
     def get_queryset(self):
-        print(self.request.user.has_perm('letters_sending.view_letterssending'))
-        if self.request.user.has_perm('letters_sending.view_letterssending'):
+        if self.request.user.has_perm('letters_sending.view_client'):
             return super().get_queryset()
         else:
             return super().get_queryset().filter(owner=self.request.user)
