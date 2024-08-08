@@ -5,6 +5,6 @@ from blog.models import Blog
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('header', 'content', 'views_count', 'published_at')
+    list_display = ('header', 'content', 'published_at', 'views_count' , 'is_active')
     search_fields = ('header', 'content',)
     ordering = ('header', 'content',)

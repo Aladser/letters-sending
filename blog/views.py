@@ -12,7 +12,7 @@ class BlogListView(CustomLoginRequiredMixin, ListView):
     template_name = TEMPLATE_FOLDER + "list.html"
 
     def get_queryset(self):
-        return super().get_queryset().order_by('-published_at')
+        return super().get_queryset().filter(is_active=True).order_by('-published_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -34,7 +34,7 @@ class BlogDetailView(CustomLoginRequiredMixin, DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        title = f"Блог №{self.object.header}"
+        title = f"Блог №{self.object.pk}"
         context['title'] = context['header'] = title
 
         return context

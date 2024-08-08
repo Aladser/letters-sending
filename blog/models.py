@@ -11,6 +11,7 @@ class Blog(TruncateTableMixin, models.Model):
     image = models.ImageField(upload_to='images', verbose_name='Изображение', default='empty_file.png', **NULLABLE)
     views_count = models.PositiveIntegerField(verbose_name="Количество просмотров", default=0)
     published_at = models.DateTimeField(verbose_name="Дата первой публикации", auto_now_add=True)
+    is_active = models.BooleanField(verbose_name='Активен', default=True)
 
     class Meta:
         verbose_name = "Блог"
