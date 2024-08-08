@@ -7,8 +7,10 @@
     {% autoescape off %}<p class="w-75 text-center p-2 border-top border-bottom">{{object.content}}</p>{% endautoescape off %}
 
     <div class="mb-2">
-        {% if user.is_authenticated %}
+        {% if perms.letters_sending.change_message %}
             <a href="{% url 'message_edit' object.pk %}" class="btn-theme rounded d-inline-block">Изменить</a>
+        {% endif %}
+        {% if perms.letters_sending.delete_message %}
             <a href="{% url 'message_delete' object.pk %}?type=detail" class="btn-theme rounded d-inline-block">Удалить</a>
         {% endif %}
         <a href="{% url 'message_list' %}?type=detail" class="btn-theme rounded d-inline-block">Назад</a>

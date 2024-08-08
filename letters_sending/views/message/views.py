@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -9,6 +10,7 @@ from libs.custom_formatter import CustomFormatter
 TEMPLATE_FOLDER = "message/"
 
 
+# СПИСОК
 class MessageListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = Message
@@ -20,6 +22,7 @@ class MessageListView(CustomLoginRequiredMixin, ListView):
     }
 
 
+# ДЕТАЛИ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = Message
@@ -35,8 +38,9 @@ class MessageDetailView(CustomLoginRequiredMixin, DetailView):
         return context
 
 
-class MessageCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
+# СОЗДАТЬ
+class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "letters_sending.add_message"
 
     model = Message
     template_name = "form.html"
@@ -65,8 +69,9 @@ class MessageCreateView(CustomLoginRequiredMixin, CreateView):
         return reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
 
-class MessageUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
+# ОБНОВИТЬ
+class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = "letters_sending.change_message"
 
     model = Message
     template_name = "form.html"
@@ -86,8 +91,9 @@ class MessageUpdateView(CustomLoginRequiredMixin, UpdateView):
         return context
 
 
-class MessageDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
+# УДАЛИТЬ
+class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "letters_sending.delete_message"
 
     model = Message
     template_name = "confirm_delete.html"
