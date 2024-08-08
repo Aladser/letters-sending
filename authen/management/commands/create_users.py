@@ -17,17 +17,17 @@ class Command(BaseCommand):
 
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
-        interface_managers_permissions = (
+        interface_manager_permissions = (
             Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='view_user', content_type=user_content_type),
             Permission.objects.get(codename='block_user', content_type=user_content_type)
         )
-        [interface_managers_group.permissions.add(perm) for perm in interface_managers_permissions]
+        [interface_managers_group.permissions.add(perm) for perm in interface_manager_permissions]
 
         # Группа пользователей
         users_group, created = Group.objects.get_or_create(name='user')
-        user_group_permissions = (
+        user_permissions = (
             Permission.objects.get(codename='add_client', content_type=client_content_type),
             Permission.objects.get(codename='change_client', content_type=client_content_type),
             Permission.objects.get(codename='delete_client', content_type=client_content_type),
@@ -38,7 +38,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type)
         )
-        [users_group.permissions.add(perm) for perm in user_group_permissions]
+        [users_group.permissions.add(perm) for perm in user_permissions]
 
         # страны пользователей
         country_obj_list = [
