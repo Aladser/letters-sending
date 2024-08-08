@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
@@ -7,6 +8,7 @@ from letters_sending.models import Client
 from libs.custom_formatter import CustomFormatter
 
 
+# СПИСОК
 class ClientListView(CustomLoginRequiredMixin, ListView):
     model = Client
     template_name = "client/list.html"
@@ -17,7 +19,10 @@ class ClientListView(CustomLoginRequiredMixin, ListView):
     }
 
 
-class ClientCreateView(CustomLoginRequiredMixin, CreateView):
+# СОЗДАТЬ
+class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "letters_sending.add_client"
+
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -44,7 +49,10 @@ class ClientCreateView(CustomLoginRequiredMixin, CreateView):
         return context
 
 
-class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
+# ОБНОВИТЬ
+class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = "letters_sending.change_client"
+
     model = Client
     template_name = "form.html"
     form_class = ClientForm
@@ -63,7 +71,10 @@ class ClientUpdateView(CustomLoginRequiredMixin, UpdateView):
         return context
 
 
-class ClientDeleteView(CustomLoginRequiredMixin, DeleteView):
+# УДАЛИТЬ
+class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "letters_sending.delete_client"
+
     model = Client
     template_name = "confirm_delete.html"
     success_url = reverse_lazy('client_list')
