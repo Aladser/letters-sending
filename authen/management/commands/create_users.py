@@ -3,27 +3,42 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
 from authen.models import User, Country
-from letters_sending.models import LettersSending
+from letters_sending.models import LettersSending, Client, Message
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         Group.objects.all().delete()
 
-        # Группа менеджеров
-        interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
-
+        client_content_type = ContentType.objects.get_for_model(Client)
+        message_content_type = ContentType.objects.get_for_model(Message)
         letters_sending_content_type = ContentType.objects.get_for_model(LettersSending)
         user_content_type = ContentType.objects.get_for_model(User)
-        view_letterssending_perm = Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type)
-        activate_letterssending_perm = Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type)
-        view_user_perm = Permission.objects.get(codename='view_user', content_type=user_content_type)
-        activate_user_perm = Permission.objects.get(codename='block_user', content_type=user_content_type)
 
-        interface_managers_group.permissions.add(view_letterssending_perm)
-        interface_managers_group.permissions.add(activate_letterssending_perm)
-        interface_managers_group.permissions.add(view_user_perm)
-        interface_managers_group.permissions.add(activate_user_perm)
+        # Группа менеджеров
+        interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
+        interface_managers_permissions = (
+            Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='view_user', content_type=user_content_type),
+            Permission.objects.get(codename='block_user', content_type=user_content_type)
+        )
+        [interface_managers_group.permissions.add(perm) for perm in interface_managers_permissions]
+
+        # Группа пользователей
+        users_group, created = Group.objects.get_or_create(name='user')
+        user_group_permissions = (
+            Permission.objects.get(codename='add_client', content_type=client_content_type),
+            Permission.objects.get(codename='change_client', content_type=client_content_type),
+            Permission.objects.get(codename='delete_client', content_type=client_content_type),
+            Permission.objects.get(codename='add_message', content_type=message_content_type),
+            Permission.objects.get(codename='change_message', content_type=message_content_type),
+            Permission.objects.get(codename='delete_message', content_type=message_content_type),
+            Permission.objects.get(codename='add_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='change_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type)
+        )
+        [users_group.permissions.add(perm) for perm in user_group_permissions]
 
         # страны пользователей
         country_obj_list = [
