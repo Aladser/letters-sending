@@ -5,21 +5,28 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
+from letters_sending.services.services import OwnerVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 
-# СПИСОК
+# СПИСОК КЛИЕНТОВ
 class ClientListView(CustomLoginRequiredMixin, ListView):
     model = Client
     template_name = "client/list.html"
-    title = 'список клиентов'
+    title = 'Cписок клиентов'
     extra_context = {
         'title': title,
-        'header': title.capitalize()
+        'header': title
     }
 
+    def get_queryset(self):
+        print(self.request.user.has_perm('letters_sending.view_letterssending'))
+        if self.request.user.has_perm('letters_sending.view_letterssending'):
+            return super().get_queryset()
+        else:
+            return super().get_queryset().filter(owner=self.request.user)
 
-# СОЗДАТЬ
+# СОЗДАТЬ КЛИЕНТА
 class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = "letters_sending.add_client"
 
@@ -49,8 +56,8 @@ class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Create
         return context
 
 
-# ОБНОВИТЬ
-class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+# ОБНОВИТЬ КЛИЕНТА
+class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerVerificationMixin, UpdateView):
     permission_required = "letters_sending.change_client"
 
     model = Client
@@ -58,21 +65,21 @@ class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Update
     form_class = ClientForm
     success_url = reverse_lazy('client_list')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    title = 'Изменить клиента'
+    extra_context = {
+        'title': title,
+        'header': title,
+        'back_url': success_url
+    }
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        title = f"изменить клиента {self.object.email}"
-        context['title'] = title
-        context['header'] = title.capitalize()
-
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
-        context['back_url'] = reverse_lazy('client_list')
-
         return context
 
 
-# УДАЛИТЬ
-class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+# УДАЛИТЬ  КЛИЕНТА
+class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerVerificationMixin, DeleteView):
     permission_required = "letters_sending.delete_client"
 
     model = Client
@@ -83,12 +90,8 @@ class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, Delete
     extra_context = {
         'css_list': ("confirm_delete.css",),
         'title': title,
-        'header': title
+        'header': title,
+        'back_url': success_url,
+        'object_type_name': "клиента"
     }
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['object_type_name'] = "клиента"
-        context['back_url'] = self.success_url
-
-        return context

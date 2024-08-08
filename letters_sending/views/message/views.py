@@ -10,7 +10,7 @@ from libs.custom_formatter import CustomFormatter
 TEMPLATE_FOLDER = "message/"
 
 
-# СПИСОК
+# СПИСОК СООБЩЕНИЙ
 class MessageListView(CustomLoginRequiredMixin, ListView):
     """LIST"""
     model = Message
@@ -22,7 +22,7 @@ class MessageListView(CustomLoginRequiredMixin, ListView):
     }
 
 
-# ДЕТАЛИ
+# ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):
     """DETAIL"""
     model = Message
@@ -38,7 +38,7 @@ class MessageDetailView(CustomLoginRequiredMixin, DetailView):
         return context
 
 
-# СОЗДАТЬ
+# СОЗДАТЬ СООБЩЕНИЕ
 class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = "letters_sending.add_message"
 
@@ -69,7 +69,7 @@ class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Creat
         return reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
 
-# ОБНОВИТЬ
+# ОБНОВИТЬ СООБЩЕНИЕ
 class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "letters_sending.change_message"
 
@@ -91,7 +91,7 @@ class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Updat
         return context
 
 
-# УДАЛИТЬ
+# УДАЛИТЬ СООБЩЕНИЕ
 class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "letters_sending.delete_message"
 

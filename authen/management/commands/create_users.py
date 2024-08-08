@@ -18,9 +18,11 @@ class Command(BaseCommand):
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
         interface_manager_permissions = (
+            Permission.objects.get(codename='view_client', content_type=client_content_type),
+            Permission.objects.get(codename='view_message', content_type=message_content_type),
             Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='view_user', content_type=user_content_type),
+            Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='block_user', content_type=user_content_type)
         )
         [interface_managers_group.permissions.add(perm) for perm in interface_manager_permissions]
@@ -75,6 +77,7 @@ class Command(BaseCommand):
         )
 
         user.set_password("user@123")
+        user.groups.add(users_group)
         user.save()
 
         # менеджер
