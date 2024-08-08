@@ -42,7 +42,8 @@ class Command(BaseCommand):
             Permission.objects.get(codename='delete_message', content_type=message_content_type),
             Permission.objects.get(codename='add_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='change_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type)
+            Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='view_client', content_type=client_content_type),
         )
         [users_group.permissions.add(perm) for perm in user_permissions]
 
@@ -54,6 +55,8 @@ class Command(BaseCommand):
             Permission.objects.get(codename='add_blog', content_type=blog_content_type),
             Permission.objects.get(codename='change_blog', content_type=blog_content_type),
             Permission.objects.get(codename='delete_blog', content_type=blog_content_type),
+            Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='view_message', content_type=message_content_type),
             admin_panel_perm
         )
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]

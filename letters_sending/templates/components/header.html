@@ -30,8 +30,10 @@
                     {% endif %}
 
                     <a href="{% url 'letter_sending_list' %}" class="main-menu__item rounded">Рассылки</a>
-                    <a href="{% url 'client_list' %}" class="main-menu__item">Клиенты</a>
                     <a href="{% url 'message_list' %}" class="main-menu__item">Сообщения</a>
+                    {% if perms.letters_sending.view_client %}
+                        <a href="{% url 'client_list' %}" class="main-menu__item">Клиенты</a>
+                    {% endif %}
                     <a href="{% url 'stat_list' %}" class="main-menu__item">Статистика</a>
                     <a href="{% url 'blog:index' %}" class="main-menu__item">Блоги</a>
 
