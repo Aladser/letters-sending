@@ -17,13 +17,16 @@ class Command(BaseCommand):
         user_content_type = ContentType.objects.get_for_model(User)
 
         admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
+        view_client_perm = Permission.objects.get(codename='view_client', content_type=client_content_type)
+        view_message_perm = Permission.objects.get(codename='view_message', content_type=message_content_type)
+        view_letterssending_perm = Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type)
 
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
         interface_manager_permissions = (
-            Permission.objects.get(codename='view_client', content_type=client_content_type),
-            Permission.objects.get(codename='view_message', content_type=message_content_type),
-            Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
+            view_client_perm,
+            view_message_perm,
+            view_letterssending_perm,
             Permission.objects.get(codename='view_user', content_type=user_content_type),
             Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='block_user', content_type=user_content_type),
@@ -43,7 +46,6 @@ class Command(BaseCommand):
             Permission.objects.get(codename='add_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='change_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='delete_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='view_client', content_type=client_content_type),
         )
         [users_group.permissions.add(perm) for perm in user_permissions]
 
@@ -55,8 +57,9 @@ class Command(BaseCommand):
             Permission.objects.get(codename='add_blog', content_type=blog_content_type),
             Permission.objects.get(codename='change_blog', content_type=blog_content_type),
             Permission.objects.get(codename='delete_blog', content_type=blog_content_type),
-            Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='view_message', content_type=message_content_type),
+            view_letterssending_perm,
+            view_message_perm,
+            view_client_perm,
             admin_panel_perm
         )
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]

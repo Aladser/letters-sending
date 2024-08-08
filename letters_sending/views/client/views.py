@@ -10,10 +10,8 @@ from libs.custom_formatter import CustomFormatter
 
 
 # СПИСОК КЛИЕНТОВ
-class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
-    permission_str = 'letters_sending.view_client'
-    permission_required = permission_str
-    list_permission = permission_str
+class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_client'
 
     model = Client
     template_name = "client/list.html"
