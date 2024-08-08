@@ -1,0 +1,15 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+
+<div class="d-flex flex-column justify-content-center align-items-center bg-white shadow p-4">
+    <img src="{{object.image|full_image_path}}" class="img-fluid mb-4" alt="{{object.image}}" style="max-width: 25rem;">
+    <h2 class="pb-3">{{object.header}}</h2>
+    <p class="card-text">{{object.content}}</p>
+    <div class="card-text text-center fst-italic">Публикация: {{object.published_at}}</div>
+    <div class="card-text text-center fst-italic mb-2">Просмотров: {{object.views_count}}</div>
+    <a href="{% url 'blog:index' %}" class="btn-theme rounded w-25">К списку блогов</a>
+</div>
+
+{% endblock %}
