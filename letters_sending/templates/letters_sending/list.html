@@ -3,8 +3,8 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-<div class="mb-4"><a href="{% url 'letter_sending_create' %}" class="btn-theme rounded">Создать рассылку</a></div>
+{% if perms.letters_sending.add_letterssending %}
+    <div class="mb-4"><a href="{% url 'letter_sending_create' %}" class="btn-theme rounded">Создать рассылку</a></div>
 {% endif %}
 
 <table class="table table-striped shadow">

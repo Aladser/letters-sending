@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
@@ -56,7 +57,9 @@ class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
 
 
 # СОЗДАТЬ РАССЫЛКУ
-class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
+class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "letters_sending.add_letterssending"
+
     model = LettersSending
     template_name = "form.html"
     form_class = LettersSendingCreateForm
@@ -93,7 +96,9 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
 
 
 # ОБНОВИТЬ РАССЫЛКУ
-class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
+class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = "letters_sending.change_letterssending"
+
     model = LettersSending
     template_name = "form.html"
     form_class = LettersSendingUpdateForm
@@ -126,7 +131,9 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
 
 
 # УДАЛИТЬ РАССЫЛКУ
-class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
+class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "letters_sending.delete_letterssending"
+
     model = LettersSending
     template_name = "confirm_delete.html"
     success_url = reverse_lazy('letter_sending_list')
