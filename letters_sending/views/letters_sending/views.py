@@ -1,21 +1,25 @@
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from authen.services import CustomLoginRequiredMixin
+from authen.services import CustomLoginRequiredMixin, show_error
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
-from letters_sending.models import LettersSending
+from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
+from letters_sending.services.services import OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "letters_sending/"
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(CustomLoginRequiredMixin, ListView):
-    """LIST"""
+class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_letterssending'
+
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
     extra_context = {
@@ -29,20 +33,14 @@ class LettersSendingListView(CustomLoginRequiredMixin, ListView):
             return redirect(reverse('authen:login'))
         return super().get(*args, **kwargs)
 
-    def get_queryset(self):
-        if self.request.user.has_perm('letters_sending.view_letterssending'):
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(owner=self.request.user)
-
 
 # ДЕТАЛИ РАССЫЛКИ
 class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
-    """DETAIL"""
     model = LettersSending
 
     def get_context_data(self, **kwargs):
-        if not (self.request.user.has_perm('letters_sending.view_letterssending') or self.object.owner == self.request.user):
+        if not (self.request.user.has_perm(
+                'letters_sending.view_letterssending') or self.object.owner == self.request.user):
             context = {'title': 'доступ запрещен', 'description': 'У вас нет доступа к этой рассылке'}
             self.template_name = "info.html"
         else:
@@ -55,8 +53,8 @@ class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
 
 
 # СОЗДАТЬ РАССЫЛКУ
-class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
+class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "letters_sending.add_letterssending"
 
     model = LettersSending
     template_name = "form.html"
@@ -94,8 +92,8 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, CreateView):
 
 
 # ОБНОВИТЬ РАССЫЛКУ
-class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
+class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = "letters_sending.change_letterssending"
 
     model = LettersSending
     template_name = "form.html"
@@ -129,8 +127,8 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, UpdateView):
 
 
 # УДАЛИТЬ РАССЫЛКУ
-class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
+class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "letters_sending.delete_letterssending"
 
     model = LettersSending
     template_name = "confirm_delete.html"
@@ -147,3 +145,24 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, DeleteView):
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
         return context
+
+
+# ВЫКЛЮЧИТЬ АКТИВНУЮ РАССЫЛКУ
+@login_required
+@permission_required('letters_sending.deactivate_letterssending')
+def deactivate_letterssending(request):
+    """Выключить активную рассылку"""
+
+    sending = LettersSending.objects.filter(pk=request.POST['pk'])
+    if sending.exists():
+        sending = sending.first()
+
+        # если рассылка не запущена
+        if sending.status.name == 'launched':
+            sending.status = Status.objects.get(name='completed')
+            sending.save()
+            return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
+        else:
+            return show_error(request, f'Ошибка: рассылка не запущена')
+    else:
+        return show_error(request, f'Ошибка: рассылка не найдена')

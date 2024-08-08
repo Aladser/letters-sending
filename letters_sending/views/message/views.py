@@ -1,16 +1,20 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
+from letters_sending.services.services import OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
 
 
-class MessageListView(CustomLoginRequiredMixin, ListView):
-    """LIST"""
+# СПИСОК СООБЩЕНИЙ
+class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+    list_permission = 'letters_sending.view_message'
+
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"
     title = 'список сообщений'
@@ -20,8 +24,8 @@ class MessageListView(CustomLoginRequiredMixin, ListView):
     }
 
 
+# ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):
-    """DETAIL"""
     model = Message
     template_name = TEMPLATE_FOLDER + "detail.html"
 
@@ -35,8 +39,9 @@ class MessageDetailView(CustomLoginRequiredMixin, DetailView):
         return context
 
 
-class MessageCreateView(CustomLoginRequiredMixin, CreateView):
-    """CREATE"""
+# СОЗДАТЬ СООБЩЕНИЕ
+class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "letters_sending.add_message"
 
     model = Message
     template_name = "form.html"
@@ -65,8 +70,9 @@ class MessageCreateView(CustomLoginRequiredMixin, CreateView):
         return reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
 
-class MessageUpdateView(CustomLoginRequiredMixin, UpdateView):
-    """UPDATE"""
+# ОБНОВИТЬ СООБЩЕНИЕ
+class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = "letters_sending.change_message"
 
     model = Message
     template_name = "form.html"
@@ -86,8 +92,9 @@ class MessageUpdateView(CustomLoginRequiredMixin, UpdateView):
         return context
 
 
-class MessageDeleteView(CustomLoginRequiredMixin, DeleteView):
-    """DELETE"""
+# УДАЛИТЬ СООБЩЕНИЕ
+class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "letters_sending.delete_message"
 
     model = Message
     template_name = "confirm_delete.html"

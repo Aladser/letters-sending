@@ -3,15 +3,15 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-<div class="mb-4"><a href="{% url 'letter_sending_create' %}" class="btn-theme rounded">Создать рассылку</a></div>
+{% if perms.letters_sending.add_letterssending %}
+    <div class="mb-4"><a href="{% url 'letter_sending_create' %}" class="btn-theme rounded">Создать рассылку</a></div>
 {% endif %}
 
 <table class="table table-striped shadow">
     <tr>
         <th>ID</th>
         <th>Сообщение</th>
-        <th>Автор</th>
+        {% if perms.letters_sending.view_letterssending %} <th>Автор</th> {% endif %}
         <th class="text-center ls-client">Клиентов</th>
         <th class="text-center">Периодичность</th>
         <th class="text-center">Статус</th>
@@ -23,7 +23,7 @@
     <tr>
         <td>{{sending.pk}}</td>
         <td><a href="{% url 'letter_sending_detail' sending.pk %}" class="table__link">{{sending.message}}</a></td>
-        <td>{{sending.owner}}</td>
+        {% if perms.letters_sending.view_letterssending %} <td>{{sending.owner}}</td> {% endif %}
         <td class="text-center ls-client">{{sending.clients.all.count}}</td>
         <td class="text-center">{{sending.period}}</td>
         <td class="text-center">{{sending.status|custom_status|safe}}</td>

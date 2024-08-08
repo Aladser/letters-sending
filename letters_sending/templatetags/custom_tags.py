@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.filter()
 def site_name_prefix(value):
-    return f"{APP_NAME}: {value}" if value != '' else APP_NAME
+    return f"{value} - {APP_NAME}" if value != '' else APP_NAME
 
 
 @register.filter()

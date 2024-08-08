@@ -29,4 +29,7 @@ urlpatterns = [
 
     # статистика
     path('stat/', AttemptListView.as_view(), name='stat_list'),
+
+    # отключить рассылку
+    path('deactivate-sending/', deactivate_letterssending, name='deactivate-sending'),
 ]
