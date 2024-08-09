@@ -1,17 +1,15 @@
+import random
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import render
 from django.views.generic import ListView
 
-from authen.services import CustomLoginRequiredMixin
+from authen.services import CustomLoginRequiredMixin, get_cached_data, save_cached_data
 from blog.models import Blog
 from config.settings import APP_NAME, CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.models import Attempt, LettersSending, Status, Client
-import random
-
-from letters_sending.services.services import OwnerListVerificationMixin
 
 
 # СПИСОК ПОПЫТОК
@@ -63,9 +61,8 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
 
 # ГЛАВНАЯ СТРАНИЦА
 def index_page(request):
-    cached_key = f'index_{request.user.pk}'
     if CACHED_ENABLED:
-        cached_data = cache.get(cached_key)
+        cached_data = get_cached_data('index', request.user.pk)
         if cached_data is not None:
             return cached_data
 
@@ -88,5 +85,5 @@ def index_page(request):
 
     response = render(request, 'index.html', context)
     if CACHED_ENABLED:
-        cache.set(cached_key, response)
+        save_cached_data('index', request.user.pk, response)
     return response
