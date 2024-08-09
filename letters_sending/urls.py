@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from letters_sending.views import AttemptListView
 from letters_sending.views.letters_sending import *
@@ -8,7 +9,7 @@ from letters_sending.views.views import index_page
 
 urlpatterns = [
     # letters_sending
-    path('', index_page, name='index'),
+    path('', cache_page(60)(index_page), name='index'),
     path('letter-sending/', LettersSendingListView.as_view(), name='letter_sending_list'),
     path('letter-sending/detail/<int:pk>', LettersSendingDetailView.as_view(), name='letter_sending_detail'),
     path('letter-sending/create', LettersSendingCreateView.as_view(), name='letter_sending_create'),
