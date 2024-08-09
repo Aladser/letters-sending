@@ -11,11 +11,14 @@
 
         <div class="main-menu">
             {% if perms.authen.view_admin_panel %}
-                <a href="/admin/" class="auth-user-link" >Админка</a>
+                <a href="/admin/" class="top-link" >Админка</a>
             {% endif %}
 
             {% if user.is_authenticated %}
-                <a href="{% url 'authen:profile' %}" class="auth-user-link" title="Профиль">{{user}}</a>
+                {% if perms.letters_sending.view_owner_letterssending%}
+                    <a href="{% url 'letter_sending_list' %}" class="top-link" title="Профиль">Рассылки</a>
+                {% endif %}
+                <a href="{% url 'authen:profile' %}" class="top-link ms-4" title="Профиль">{{user}}</a>
             {% else %}
                 <div id="no-auth-user" class="opacity-75">Вход не выполнен</div>
             {% endif %}
@@ -23,28 +26,29 @@
             <button id="switch-menu-display" class="btn m-0 p-0" title="Главное меню">
                 <img src="{% static 'menu.ico'%}" class="text-light">
             </button>
-            {% if user.is_authenticated %}
-                <div id="main-menu" class="main-menu__menu d-none rounded">
-                    {% if perms.authen.view_user %}
-                        <a href="{% url 'authen:index' %}" class="main-menu__item rounded">Пользователи</a>
-                    {% endif %}
+            <div id="main-menu" class="main-menu__menu d-none rounded">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'authen:login' %}" class="main-menu__item rounded">Войти</a>
+                {% endif %}
 
-                    {% if perms.letters_sending.view_owner_letterssending %}
-                        <a href="{% url 'letter_sending_list' %}" class="main-menu__item rounded">Рассылки</a>
-                    {% endif %}
-                    {% if perms.letters_sending.view_owner_message %}
-                        <a href="{% url 'message_list' %}" class="main-menu__item">Сообщения</a>
-                    {% endif %}
-                    {% if perms.letters_sending.view_owner_client %}
-                        <a href="{% url 'client_list' %}" class="main-menu__item">Клиенты</a>
-                    {% endif %}
+                {% if perms.authen.view_user %}
+                    <a href="{% url 'authen:index' %}" class="main-menu__item rounded">Пользователи</a>
+                {% endif %}
+
+                {% if perms.letters_sending.view_owner_message %}
+                    <a href="{% url 'message_list' %}" class="main-menu__item">Сообщения</a>
+                {% endif %}
+                {% if perms.letters_sending.view_owner_client %}
+                    <a href="{% url 'client_list' %}" class="main-menu__item">Клиенты</a>
+                {% endif %}
+
+                {% if user.is_authenticated %}
                     <a href="{% url 'stat_list' %}" class="main-menu__item">Статистика</a>
                     <a href="{% url 'blog:index' %}" class="main-menu__item">Блоги</a>
-
                     <div class="text-light">-</div>
                     <a href="{% url 'authen:logout' %}" class="main-menu__item rounded">Выйти</a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

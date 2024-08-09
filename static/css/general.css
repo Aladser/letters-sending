@@ -93,13 +93,13 @@ html {
 
 
 /* имя пользователя */
-.auth-user-link{
+.top-link{
     text-decoration: none;
     color:white;
     padding: 0.25em 0.5em;
     border-radius: 20px;
 }
-.auth-user-link:hover{
+.top-link:hover{
     background-color: #3583a1;
 }
 
