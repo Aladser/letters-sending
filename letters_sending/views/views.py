@@ -61,8 +61,10 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
 
 # ГЛАВНАЯ СТРАНИЦА
 def index_page(request):
+    cached_key = 'index'
+
     if CACHED_ENABLED:
-        cached_data = get_cached_data('index', request.user.pk)
+        cached_data = get_cached_data(cached_key, request.user.pk)
         if cached_data is not None:
             return cached_data
 
@@ -85,5 +87,5 @@ def index_page(request):
 
     response = render(request, 'index.html', context)
     if CACHED_ENABLED:
-        save_cached_data('index', request.user.pk, response)
+        save_cached_data(cached_key, request.user.pk, response)
     return response
