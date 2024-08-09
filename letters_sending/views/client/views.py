@@ -10,7 +10,8 @@ from libs.custom_formatter import CustomFormatter
 
 
 # СПИСОК КЛИЕНТОВ
-class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+    permission_required = "letters_sending.view_owner_client"
     list_permission = 'letters_sending.view_client'
 
     model = Client

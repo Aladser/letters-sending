@@ -12,15 +12,16 @@ TEMPLATE_FOLDER = "message/"
 
 
 # СПИСОК СООБЩЕНИЙ
-class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+    permission_required = "letters_sending.view_owner_message"
     list_permission = 'letters_sending.view_message'
 
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"
-    title = 'список сообщений'
+    title = 'Cписок сообщений'
     extra_context = {
         'title': title,
-        'header': title.capitalize()
+        'header': title
     }
 
 
