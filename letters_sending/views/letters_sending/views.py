@@ -6,13 +6,14 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from authen.services import CustomLoginRequiredMixin, show_error, get_cached_data, save_cached_data
+from authen.services import CustomLoginRequiredMixin, show_error
 from config.settings import CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
+from libs.cached_stream import CachedStream
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
@@ -37,7 +38,7 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
 
     def get(self, *args, **kwargs):
         if CACHED_ENABLED:
-            cached_data = get_cached_data(self.cached_key, self.request.user.pk)
+            cached_data = CachedStream.get_data(self.cached_key, self.request.user.pk)
             if cached_data is not None:
                 return cached_data
 
@@ -46,8 +47,9 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
     def render_to_response(self, context, **response_kwargs):
         response = render(self.request, self.template_name, context)
         if CACHED_ENABLED:
-            save_cached_data(self.cached_key, self.request.user.pk, response)
+            CachedStream.save_data(self.cached_key, self.request.user.pk, response)
         return response
+
 
 # ДЕТАЛИ РАССЫЛКИ
 class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
