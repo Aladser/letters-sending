@@ -18,32 +18,30 @@ class Command(BaseCommand):
 
         admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
 
-        view_client_perm = Permission.objects.get(codename='view_client', content_type=client_content_type)
-        view_message_perm = Permission.objects.get(codename='view_message', content_type=message_content_type)
-        view_letterssending_perm = Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type)
-
         view_owner_client_perm = Permission.objects.get(codename='view_owner_client', content_type=client_content_type)
         view_owner_message_perm = Permission.objects.get(codename='view_owner_message', content_type=message_content_type)
         view_owner_letterssending_perm = Permission.objects.get(codename='view_owner_letterssending', content_type=letters_sending_content_type)
+        view_owner_stat_letterssending_perm = Permission.objects.get(codename='view_owner_stat_letterssending', content_type=letters_sending_content_type)
 
         """
-        view_*_perm - права на просмотр всех клиентов, сообщений, рассылок
-        view_ownrer_*_perm - доступ к ListView - контроллерам
-        view_user - просмотр пользоввтелей
+        view_*_perm - права на просмотр списка объектов
+        view_owner_*_perm - доступ к ListView - контроллерам
         deactivate_letterssending - выключить рассылку
-        block_user - 
+        block_user - блокировать пользователя
         """
 
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
         interface_manager_permissions = (
-            view_client_perm,
-            view_message_perm,
-            view_letterssending_perm,
+            Permission.objects.get(codename='view_client', content_type=client_content_type),
+            Permission.objects.get(codename='view_message', content_type=message_content_type),
+            Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='view_stat_letterssending', content_type=letters_sending_content_type),
 
             view_owner_client_perm,
             view_owner_message_perm,
             view_owner_letterssending_perm,
+            view_owner_stat_letterssending_perm,
 
             Permission.objects.get(codename='view_user', content_type=user_content_type),
             Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
@@ -71,6 +69,7 @@ class Command(BaseCommand):
             view_owner_client_perm,
             view_owner_message_perm,
             view_owner_letterssending_perm,
+            view_owner_stat_letterssending_perm
         )
         [users_group.permissions.add(perm) for perm in user_permissions]
 
