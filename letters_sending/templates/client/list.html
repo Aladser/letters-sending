@@ -12,25 +12,29 @@
 <div class="d-flex flex-wrap">
     {% for client in object_list%}
     <div class="card m-2 p-4 d-flex flex-column justify-content-between" style="width: 15rem">
-        <div>
-            <div class="fw-bolder mb-2">
-                <div class="card-text">{{client.surname}}</div>
-                <div class="card-text">{{client.name}}</div>
-                {% if client.patronym %}
-                    <div class="card-text">{{client.patronym}}</div>
+        <div class="d-flex flex-column justify-content-between h-100">
+            <div>
+                <div class="fw-bolder mb-2">
+                    <div class="card-text">{{client.surname}}</div>
+                    <div class="card-text">{{client.name}}</div>
+                    {% if client.patronym %}
+                        <div class="card-text">{{client.patronym}}</div>
+                    {% else %}
+                        <div class="card-text text-light">-</div>
+                    {% endif %}
+                </div>
+
+                <div class="card-text mb-2">{{client.email}}</div>
+
+                {% if client.comment%}
+                    <div class="card-text mb-2 fs-6 text-wrap"><div class="fw-bolder">Заметка:</div> &nbsp;{{client.comment}}</div>
                 {% else %}
-                    <div class="card-text text-light">-</div>
+                    <br>
                 {% endif %}
 
             </div>
 
-            <div class="card-text mb-2">{{client.email}}</div>
-
-            {% if client.comment%}
-                <div class="card-text mb-2 fs-6 text-secondary fst-italic text-wrap">Заметка: {{client.comment}}</div>
-            {% else %}
-                <br>
-            {% endif %}
+            {% if perms.letters_sending.view_client %} <div class="card-text mb-2 fst-italic text-secondary" title="{{client.owner.email}}">автор - {{client.owner}}</div> {% endif %}
         </div>
 
         <div>

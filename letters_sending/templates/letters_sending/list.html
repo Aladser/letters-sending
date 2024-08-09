@@ -23,7 +23,7 @@
     <tr>
         <td>{{sending.pk}}</td>
         <td><a href="{% url 'letter_sending_detail' sending.pk %}" class="table__link">{{sending.message}}</a></td>
-        {% if perms.letters_sending.view_letterssending %} <td>{{sending.owner}}</td> {% endif %}
+        {% if perms.letters_sending.view_letterssending %} <td title="{{sending.owner.email}}">{{sending.owner}}</td> {% endif %}
         <td class="text-center ls-client">{{sending.clients.all.count}}</td>
         <td class="text-center">{{sending.period}}</td>
         <td class="text-center">{{sending.status|custom_status|safe}}</td>
