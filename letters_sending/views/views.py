@@ -71,7 +71,6 @@ def index_page(request):
 
         blog_list = [blog_list[blog_indexes_list[i]] for i in range(3)]
 
-    print(blog_list)
     context = {
         'header':APP_NAME,
         'sendings_count': LettersSending.objects.all().count(),

@@ -1,10 +1,11 @@
 from secrets import token_hex
 from urllib.request import Request
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -28,6 +29,13 @@ class UserLoginView(LoginView):
         'header': title.title(),
         'title': title
     }
+
+
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        print(request.user)
+        return redirect('index')
 
 
 # РЕГИСТРАЦИЯ
