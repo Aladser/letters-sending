@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.core.cache import cache
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -17,7 +16,7 @@ from django.views.generic import CreateView, UpdateView, ListView
 from authen.forms import RegisterForm, AuthForm, ProfileForm, UserPasswordResetForm, UserSetPasswordForm
 from authen.models import User
 from authen.services import CustomLoginRequiredMixin, show_error
-from config.settings import APP_NAME, EMAIL_HOST_USER, CACHED_ENABLED
+from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
 # АВТОРИЗАЦИЯ

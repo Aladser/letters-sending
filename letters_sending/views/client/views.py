@@ -7,11 +7,13 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from letters_sending.services.services import OwnerVerificationMixin, OwnerListVerificationMixin
+from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
 
 # СПИСОК КЛИЕНТОВ
-class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                     CachedStreamMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_client"
     list_permission = app_name + '.view_client'
@@ -24,6 +26,7 @@ class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, Permi
         'title': title,
         'header': title
     }
+    cached_key = 'view_client'
 
 
 # СОЗДАТЬ КЛИЕНТА

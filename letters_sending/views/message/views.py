@@ -7,13 +7,15 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from letters_sending.services.services import OwnerListVerificationMixin
+from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
 
 
 # СПИСОК СООБЩЕНИЙ
-class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                      CachedStreamMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_message"
     list_permission = app_name + '.view_message'
@@ -26,7 +28,7 @@ class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, Perm
         'title': title,
         'header': title
     }
-
+    cached_key = 'view_message'
 
 # ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):

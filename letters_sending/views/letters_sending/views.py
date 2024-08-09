@@ -2,25 +2,25 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin, show_error
-from config.settings import CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
-from libs.cached_stream import CachedStream
+from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                             CachedStreamMixin, ListView):
 
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_letterssending"
@@ -35,20 +35,6 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
         'css_list': ("letters_sending.css",)
     }
     cached_key = 'view_letterssending'
-
-    def get(self, *args, **kwargs):
-        if CACHED_ENABLED:
-            cached_data = CachedStream.get_data(self.cached_key, self.request.user.pk)
-            if cached_data is not None:
-                return cached_data
-
-        return super().get(*args, **kwargs)
-
-    def render_to_response(self, context, **response_kwargs):
-        response = render(self.request, self.template_name, context)
-        if CACHED_ENABLED:
-            CachedStream.save_data(self.cached_key, self.request.user.pk, response)
-        return response
 
 
 # ДЕТАЛИ РАССЫЛКИ
