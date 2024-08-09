@@ -119,7 +119,7 @@ SCHEDULER_ACTIVE = False
 
 # КЭШИРОВАНИЕ
 CACHED_ENABLED = True
-CACHED_TIME = 60
+CACHED_TIME = 300
 if CACHED_ENABLED:
     CACHES = {
         "default": {
