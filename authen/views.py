@@ -35,9 +35,8 @@ class UserLoginView(LoginView):
 class CustomLogoutView(LogoutView):
     def get(self, request, *args, **kwargs):
         if CACHED_ENABLED:
-            cached_key = f'index_{request.user.pk}'
-            cache.delete(cached_key)
-
+            cache.delete(f'index_{request.user.pk}')
+            cache.delete(f'profile_{request.user.pk}')
         logout(request)
         return redirect('index')
 
@@ -85,13 +84,44 @@ class ProfileView(CustomLoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileForm
     template_name = 'user_form.html'
-    success_url = reverse_lazy('product:list')
+    success_url = reverse_lazy('letter_sending_list')
 
     title = "профиль пользователя"
     extra_context = {
         'header': title.title(),
         'title': title
     }
+
+    def get(self, request, *args, **kwargs):
+        if CACHED_ENABLED:
+            # поиск кэша страницы
+            cached_data = cache.get(f'profile_{request.user.pk}')
+            if cached_data is not None:
+                return cached_data
+
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if CACHED_ENABLED:
+            # удаление устаревшего кэша
+            cache.delete(f'profile_{request.user.pk}')
+
+        return super().post(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        response_kwargs.setdefault("content_type", self.content_type)
+        response = render(
+            request=self.request,
+            template_name=self.template_name,
+            context=context,
+            using=self.template_engine,
+            **response_kwargs,
+        )
+
+        if CACHED_ENABLED:
+            # установка нового кэша
+            cache.set(f'profile_{self.request.user.pk}', response)
+        return response
 
     def get_object(self, queryset=None):
         return self.request.user

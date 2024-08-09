@@ -34,7 +34,8 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
         if self.request.user.has_perm(self.list_owner_permission):
             # все заявки
             queryset = super().get_queryset(*args, **kwargs)
-            queryset = queryset.order_by('letters_sending').values('letters_sending', 'response').annotate(count=Count('id'))
+            queryset = queryset.order_by('letters_sending').values('letters_sending', 'response').annotate(
+                count=Count('id'))
 
             if not self.request.user.has_perm(self.list_permission):
                 # только свои заявки
@@ -57,7 +58,6 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
             attempt['status'] = sending.status
             attempt['owner'] = sending.owner
 
-
         return context
 
 
@@ -69,7 +69,6 @@ def index_page(request):
         if cached_data is not None:
             return cached_data
 
-
     blog_list = Blog.objects.all()
     blog_list_count = blog_list.count()
     if blog_list_count > 3:
@@ -80,9 +79,9 @@ def index_page(request):
         blog_list = [blog_list[blog_indexes_list[i]] for i in range(3)]
 
     context = {
-        'header':APP_NAME,
+        'header': APP_NAME,
         'sendings_count': LettersSending.objects.all().count(),
-        'active_sendings_count': LettersSending.objects.filter(status= Status.objects.get(name='launched')).count(),
+        'active_sendings_count': LettersSending.objects.filter(status=Status.objects.get(name='launched')).count(),
         'clients_count': Client.objects.all().count(),
         'blog_list': blog_list,
     }
