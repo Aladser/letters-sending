@@ -1,7 +1,9 @@
 from django.db.models import Count
+from django.shortcuts import render
 from django.views.generic import ListView
 
 from authen.services import CustomLoginRequiredMixin
+from config.settings import APP_NAME
 from letters_sending.models import Attempt, LettersSending
 
 
@@ -26,3 +28,7 @@ class AttemptListView(CustomLoginRequiredMixin, ListView):
             attempt['status'] = sending.status
 
         return context
+
+
+def index_page(request):
+    return render(request, 'index.html', {'header':APP_NAME})

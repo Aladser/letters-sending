@@ -4,10 +4,11 @@ from letters_sending.views import AttemptListView
 from letters_sending.views.letters_sending import *
 from letters_sending.views.message import *
 from letters_sending.views.client import *
+from letters_sending.views.views import index_page
 
 urlpatterns = [
     # letters_sending
-    path('', LettersSendingListView.as_view(), name='index'),
+    path('', index_page, name='index'),
     path('letter-sending/', LettersSendingListView.as_view(), name='letter_sending_list'),
     path('letter-sending/detail/<int:pk>', LettersSendingDetailView.as_view(), name='letter_sending_detail'),
     path('letter-sending/create', LettersSendingCreateView.as_view(), name='letter_sending_create'),
