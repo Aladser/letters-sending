@@ -137,6 +137,8 @@ class LettersSending(TruncateTableMixin, models.Model):
         permissions = [
             ('deactivate_letterssending', 'Выключить рассылку'),
             ('view_owner_letterssending', 'Показать свои рассылки'),
+            ('view_owner_stat_letterssending', 'Показать статистику своих рассылок'),
+            ('view_stat_letterssending', 'Показать статистику рассылок'),
         ]
 
     def __str__(self):

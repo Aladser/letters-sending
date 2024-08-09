@@ -21,16 +21,15 @@ class OwnerVerificationMixin:
 class OwnerListVerificationMixin:
     """Миксин проверки права пользователя на просмотр списка объектов"""
 
-    app_name = None
-    """приложение класса"""
+    list_permission = None
+    list_owner_permission = None
 
     def get_queryset(self):
         """Возвращает список бъектов с учетом права пользователя на просмотр """
 
-        class_name = str(type(self)).split('.')[-1][:-2].replace('ListView', '').lower()
-        if self.request.user.has_perm(f'{self.app_name}.view_{class_name}'):
+        if self.request.user.has_perm(self.list_permission):
             return super().get_queryset()
-        elif self.request.user.has_perm(f'{self.app_name}.view_owner_{class_name}'):
+        elif self.request.user.has_perm(self.list_owner_permission):
             return super().get_queryset().filter(owner=self.request.user)
         else:
             return self.model.objects.none()

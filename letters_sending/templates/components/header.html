@@ -45,7 +45,6 @@
                 {% endif %}
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'stat_list' %}" class="main-menu__item">Статистика</a>
                     <div class="text-light">-</div>
                     <a href="{% url 'authen:logout' %}" class="main-menu__item rounded">Выйти</a>
                 {% endif %}

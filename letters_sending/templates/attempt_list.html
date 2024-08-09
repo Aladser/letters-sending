@@ -6,6 +6,7 @@
 <table class="table table-striped shadow">
     <tr>
         <th class="text-center">ID рассылки</th>
+        {% if perms.letters_sending.view_stat_letterssending %}<th>Автор</th>{% endif %}
         <th>Статус</th>
         <th>Сообщение</th>
         <th>Ответ почтового сервера</th>
@@ -15,6 +16,9 @@
     {% for object in object_list%}
     <tr>
         <td class="text-center">{{object.letters_sending}}</td>
+        {% if perms.letters_sending.view_stat_letterssending %}
+            <td class="card-text mb-2 fst-italic text-secondary" title="{{object.owner.email}}">{{object.owner}}</td>
+        {% endif %}
         <td>{{object.status|custom_status|safe}}</td>
         <td>{{object.message}}</td>
         <td>{{object.response}}</td>

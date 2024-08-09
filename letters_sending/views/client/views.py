@@ -14,6 +14,8 @@ from libs.custom_formatter import CustomFormatter
 class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_client"
+    list_permission = app_name + '.view_client'
+    list_owner_permission = app_name + '.view_owner_client'
 
     model = Client
     template_name = "client/list.html"

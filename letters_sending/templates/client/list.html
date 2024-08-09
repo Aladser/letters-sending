@@ -34,7 +34,9 @@
 
             </div>
 
-            {% if perms.letters_sending.view_client %} <div class="card-text mb-2 fst-italic text-secondary" title="{{client.owner.email}}">автор - {{client.owner}}</div> {% endif %}
+            {% if perms.letters_sending.view_client %}
+                <div class="card-text mb-2 fst-italic text-secondary" title="{{client.owner.email}}">автор - {{client.owner}}</div>
+            {% endif %}
         </div>
 
         <div>

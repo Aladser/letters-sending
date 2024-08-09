@@ -14,6 +14,8 @@ urlpatterns = [
     path('letter-sending/create', LettersSendingCreateView.as_view(), name='letter_sending_create'),
     path('letter-sending/edit/<int:pk>', LettersSendingUpdateView.as_view(), name='letter_sending_edit'),
     path('letter-sending/delete/<int:pk>', LettersSendingDeleteView.as_view(), name='letter_sending_delete'),
+    # статистика
+    path('stat/', AttemptListView.as_view(), name='letter_sending_stat'),
 
     # message
     path('message/', MessageListView.as_view(), name='message_list'),
@@ -27,9 +29,6 @@ urlpatterns = [
     path('client/create', ClientCreateView.as_view(), name='client_create'),
     path('client/edit/<int:pk>', ClientUpdateView.as_view(), name='client_edit'),
     path('client/delete/<int:pk>', ClientDeleteView.as_view(), name='client_delete'),
-
-    # статистика
-    path('stat/', AttemptListView.as_view(), name='stat_list'),
 
     # отключить рассылку
     path('deactivate-sending/', deactivate_letterssending, name='deactivate-sending'),
