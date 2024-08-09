@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin
+from letters_sending.apps import LetterConfig
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from letters_sending.services.services import OwnerListVerificationMixin
@@ -13,8 +14,8 @@ TEMPLATE_FOLDER = "message/"
 
 # СПИСОК СООБЩЕНИЙ
 class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
-    permission_required = "letters_sending.view_owner_message"
-    list_permission = 'letters_sending.view_message'
+    app_name = LetterConfig.name
+    permission_required = app_name + ".view_owner_message"
 
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"

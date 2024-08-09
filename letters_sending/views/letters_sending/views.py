@@ -19,8 +19,8 @@ TEMPLATE_FOLDER = LetterConfig.name + '/'
 
 # СПИСОК РАССЫЛОК
 class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
-    permission_required = "letters_sending.view_owner_letterssending"
-    list_permission = 'letters_sending.view_letterssending'
+    app_name = LetterConfig.name
+    permission_required = app_name + ".view_owner_letterssending"
 
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"

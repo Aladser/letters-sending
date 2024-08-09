@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin
+from letters_sending.apps import LetterConfig
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from letters_sending.services.services import OwnerVerificationMixin, OwnerListVerificationMixin
@@ -11,8 +12,8 @@ from libs.custom_formatter import CustomFormatter
 
 # СПИСОК КЛИЕНТОВ
 class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
-    permission_required = "letters_sending.view_owner_client"
-    list_permission = 'letters_sending.view_client'
+    app_name = LetterConfig.name
+    permission_required = app_name + ".view_owner_client"
 
     model = Client
     template_name = "client/list.html"
