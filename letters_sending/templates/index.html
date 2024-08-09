@@ -3,6 +3,42 @@
 
 {% block content %}
 
-<div>Что-то написано</div>
+<article class="py-2 mb-4">
+    <h4 class="mx-auto text-center">Статистика</h4>
+    <table class="table table-responsive w-75 mx-auto shadow fs-3">
+      <tr>
+          <td class="fw-bolder">Рассылок</td>
+          <td>{{sendings_count}}</td>
+      </tr>
+      <tr>
+          <td class="fw-bolder">Активных рассылок</td>
+          <td>{{active_sendings_count}}</td>
+      </tr>
+      <tr>
+          <td class="fw-bolder">Клиентов</td>
+          <td>{{clients_count}}</td>
+      </tr>
+    </table>
+</article>
+
+<article class="py-2">
+    <h4 class="mx-auto text-center">Блоги</h4>
+    <div class="bg-white border p-3 shadow">
+        <div class="d-flex justify-content-around mb-3">
+            {% for object in blog_list %}
+                <div class="border border-2 pb-3 mb-1 me-1" style="width: 20rem;">
+                  <div class="h-50 mb-2">
+                      <img src="{{object.image|full_image_path}}" class="card-img-top h-100" alt="{{object.image}}">
+                  </div>
+                  <div class="h-50 px-2">
+                    <h5 class="card-title" title="{{object.header}}">{{object.header|truncatechars:25}}</h5>
+                    <p class="card-text">{{object.content|truncatechars:120}}</p>
+                  </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'blog:list' %}" class="btn-theme rounded d-block w-25 mx-auto">Все блоги</a>
+    </div>
+</article>
 
 {% endblock %}

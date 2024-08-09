@@ -7,7 +7,7 @@ TEMPLATE_FOLDER = "blog/"
 
 
 # СПИСОК БЛОГОВ
-class BlogListView(CustomLoginRequiredMixin, ListView):
+class BlogListView(ListView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "list.html"
 
@@ -22,7 +22,7 @@ class BlogListView(CustomLoginRequiredMixin, ListView):
 
 
 # ДЕТАЛИ БЛОГА
-class BlogDetailView(CustomLoginRequiredMixin, DetailView):
+class BlogDetailView(DetailView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "detail.html"
 
