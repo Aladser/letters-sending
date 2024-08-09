@@ -83,9 +83,6 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_blog', content_type=blog_content_type),
             Permission.objects.get(codename='delete_blog', content_type=blog_content_type),
 
-            view_letterssending_perm,
-            view_message_perm,
-
             admin_panel_perm
         )
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]

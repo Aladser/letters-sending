@@ -16,6 +16,8 @@ TEMPLATE_FOLDER = "message/"
 class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_message"
+    list_permission = app_name + '.view_message'
+    list_owner_permission = app_name + '.view_owner_message'
 
     model = Message
     template_name = TEMPLATE_FOLDER + "list.html"

@@ -1,11 +1,14 @@
 from pathlib import Path
-from libs.env import env
+from dotenv import load_dotenv
+import os
 
 APP_NAME = "Сервис рассылок"
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-27r+^-=803(&$v1wl5%%zkeso7_bb!p$(=regy=u349n2j+^hc"
 DEBUG = True
 ALLOWED_HOSTS = []
+
+load_dotenv(BASE_DIR / '.env')
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -54,11 +57,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
@@ -95,12 +98,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # ПОЧТА
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -113,5 +116,6 @@ LOGOUT_REDIRECT_URL = '/'
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s"
 SCHEDULER_INTERVAL = 15
 SCHEDULER_ACTIVE = False
+
 
 
