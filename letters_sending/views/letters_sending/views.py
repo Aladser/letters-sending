@@ -7,24 +7,26 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin, show_error
+from letters_sending.apps import LetterConfig
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
 from libs.custom_formatter import CustomFormatter
 
-TEMPLATE_FOLDER = "letters_sending/"
+TEMPLATE_FOLDER = LetterConfig.name + '/'
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, ListView):
+class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+    permission_required = "letters_sending.view_owner_letterssending"
     list_permission = 'letters_sending.view_letterssending'
 
     model = LettersSending
     template_name = TEMPLATE_FOLDER + "list.html"
     extra_context = {
         'title': '',
-        'header': "cписок рассылок",
+        'header': "Cписок рассылок",
         'css_list': ("letters_sending.css",)
     }
 
