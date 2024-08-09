@@ -23,6 +23,9 @@ class Message(TruncateTableMixin, models.Model):
         verbose_name = "Сообщение"
         verbose_name_plural = "сообщения"
         ordering = ("subject",)
+        permissions = [
+            ('view_owner_message', 'Показать свои сообщения'),
+        ]
 
     def __str__(self):
         return self.subject
@@ -49,6 +52,9 @@ class Client(TruncateTableMixin, models.Model):
         verbose_name = "Клиент"
         verbose_name_plural = "клиенты"
         ordering = ("surname", "name", "patronym", "email")
+        permissions = [
+            ('view_owner_client', 'Показать своих клиентов'),
+        ]
 
     def __str__(self):
         if self.patronym:
@@ -130,6 +136,7 @@ class LettersSending(TruncateTableMixin, models.Model):
         verbose_name_plural = "почтовые рассылки"
         permissions = [
             ('deactivate_letterssending', 'Выключить рассылку'),
+            ('view_owner_letterssending', 'Показать свои рассылки'),
         ]
 
     def __str__(self):
