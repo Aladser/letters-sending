@@ -43,3 +43,14 @@ class CachedStream:
 
         # сохраняем страницу пользователя
         cache.set(user_key, data)
+
+    @staticmethod
+    def clear_data(key):
+        """Очищает кэши страницы"""
+
+        key_store_list = cache.get(key)
+        if key_store_list is not None:
+            [cache.delete(key) for key in key_store_list]
+        key_store_list = None
+
+

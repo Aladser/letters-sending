@@ -12,6 +12,7 @@ from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdate
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
+from libs.cached_stream import CachedStream
 from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
@@ -34,6 +35,7 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
         'header': "Cписок рассылок",
         'css_list': ("letters_sending.css",)
     }
+
     cached_key = 'view_letterssending'
 
 
@@ -78,6 +80,9 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin
             self.object.owner = self.request.user
             self.object.save()
 
+            CachedStream.clear_data('index')
+            CachedStream.clear_data('view_letterssending')
+
             if self.object.status.name == "launched":
                 # запуск задачи
                 send_letters(self.object)
@@ -114,6 +119,9 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin
                     # если время запуска просрочено
                     send_letters(self.object)
             self.object.save()
+
+            CachedStream.clear_data('index')
+            CachedStream.clear_data('view_letterssending')
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -147,6 +155,9 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
         context['object_type_name'] = "рассылку"
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
+        CachedStream.clear_data('index')
+        CachedStream.clear_data('view_letterssending')
+
         return context
 
 
@@ -164,6 +175,10 @@ def deactivate_letterssending(request):
         if sending.status.name == 'launched':
             sending.status = Status.objects.get(name='completed')
             sending.save()
+
+            CachedStream.clear_data('index')
+            CachedStream.clear_data('view_letterssending')
+
             return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
         else:
             return show_error(request, f'Ошибка: рассылка не запущена')
