@@ -91,7 +91,7 @@ class Status(models.Model):
 
 
 # ----- РАССЫЛКА -----
-class LettersSending(models.Model):
+class LettersSending(TruncateTableMixin, models.Model):
     """Рассылка"""
 
     message = models.ForeignKey(

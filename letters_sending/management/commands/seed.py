@@ -81,7 +81,6 @@ class Command(BaseCommand):
         if User.objects.all().count() == 0:
             raise Exception('Пользователи не найдены')
 
-        LettersSending.objects.all().delete()
         Attempt.objects.all().delete()
 
 
@@ -177,6 +176,18 @@ class Command(BaseCommand):
 
 
         # -----------------------------
+        # --------Рассылки------------
+        # -----------------------------
+        sending_obj_list = [
+            {'message_id':1, 'owner_id':1, 'period_id':1},
+            {'message_id':2, 'owner_id':2, 'period_id':1},
+            {'message_id':3, 'owner_id':3, 'period_id':1}
+        ]
+        LettersSending.truncate()
+        letters_sending_list = [LettersSending(**params) for params in sending_obj_list]
+        LettersSending.objects.bulk_create(letters_sending_list)
+
+        # -----------------------------
         # --------Блоги------------
         # -----------------------------
         blog_obj_list = []
@@ -194,3 +205,4 @@ class Command(BaseCommand):
         Blog.truncate()
         blog_create_list = [Blog(**params) for params in blog_obj_list]
         Blog.objects.bulk_create(blog_create_list)
+
