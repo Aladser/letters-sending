@@ -12,9 +12,13 @@
 <div class="d-flex flex-wrap">
     {% for msg in object_list%}
         <div class="card m-2 p-4 d-flex flex-column justify-content-between" style="width: 15rem">
-            <div class="mb-2">
-                <div class="card-title fw-bolder">{{msg.subject}}</div>
-                <div class="card-text">{{msg.content|truncatechars:150}}</div>
+            <div class="mb-2 d-flex flex-column justify-content-between h-100">
+                <div>
+                    <div class="card-title fw-bolder">{{msg.subject}}</div>
+                    <div class="card-text">{{msg.content|truncatechars:150}}</div>
+                </div>
+
+                {% if perms.letters_sending.view_message %} <div class="card-text pt-2 mb-2 fst-italic text-secondary" title="{{msg.owner.email}}">автор - {{msg.owner}}</div> {% endif %}
             </div>
 
             <div>
