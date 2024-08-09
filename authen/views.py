@@ -3,6 +3,7 @@ from urllib.request import Request
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
@@ -45,9 +46,11 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         if form.is_valid():
             # создание ссылки подтверждения почты
+            users_group = Group.objects.get(name='user')
             self.object = form.save()
             self.object.is_active = False
             self.object.token = token_hex(10)
+            self.object.groups.add(users_group)
             self.object.save()
 
             url = f"http://{self.request.get_host()}/user/email-confirm/{self.object.token}"

@@ -29,10 +29,12 @@
             <div id="main-menu" class="main-menu__menu d-none rounded">
                 {% if not user.is_authenticated %}
                     <a href="{% url 'authen:login' %}" class="main-menu__item rounded">Войти</a>
+                    <a href="{% url 'authen:register' %}" class="main-menu__item rounded">Регистрация</a>
                 {% endif %}
 
                 {% if perms.authen.view_user %}
                     <a href="{% url 'authen:index' %}" class="main-menu__item rounded">Пользователи</a>
+                    <div class="text-light">-</div>
                 {% endif %}
 
                 {% if perms.letters_sending.view_owner_message %}
