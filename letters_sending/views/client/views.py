@@ -13,7 +13,7 @@ from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
 CACHED_CLIENTS_KEY = 'view_client'
-
+"""ключ хранилища ключей кэшей страницы списка клиентов"""
 
 # СПИСОК КЛИЕНТОВ
 class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,

@@ -5,7 +5,10 @@ from libs.managed_cache import ManagedCache
 
 
 class ManagedCachedMixin:
-    """Миксин управляемоего кэша"""
+    """
+        Миксин управляемоего кэша
+        Заменяет get-,render_to_response-методы CBV-контроллера
+    """
 
     cached_key = None
     __exception_message = 'Не установлен ключ "cached_key" класса CachedStreamMixin'

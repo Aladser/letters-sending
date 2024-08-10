@@ -13,7 +13,7 @@ from letters_sending.models import Attempt, LettersSending, Status, Client
 from libs.managed_cache import ManagedCache
 
 CACHED_INDEX_KEY = 'index'
-"""кэш главных страниц пользователей"""
+"""ключ хранилища ключей кэшей главной страницы """
 
 
 # СПИСОК ПОПЫТОК

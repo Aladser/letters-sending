@@ -3,21 +3,20 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.cache import cache
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin, show_error
-from config.settings import CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
 from letters_sending.views.views import CACHED_INDEX_KEY
+from libs.custom_formatter import CustomFormatter
 from libs.managed_cache import ManagedCache
 from libs.managed_cache_mixin import ManagedCachedMixin
-from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
 CACHED_SENDINGS_KEY = 'view_letterssending'
@@ -29,7 +28,6 @@ CACHED_DETAIL_SENDING_KEY = 'detail_letterssending_'
 # СПИСОК РАССЫЛОК
 class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
                              ManagedCachedMixin, ListView):
-
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_letterssending"
     list_permission = app_name + '.view_letterssending'
@@ -169,6 +167,7 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
 
         return context
 
+
 # ВЫКЛЮЧИТЬ АКТИВНУЮ РАССЫЛКУ
 @login_required
 @permission_required('letters_sending.deactivate_letterssending')
@@ -186,6 +185,7 @@ def deactivate_letterssending(request):
 
             ManagedCache.clear_data(CACHED_INDEX_KEY)
             ManagedCache.clear_data(CACHED_SENDINGS_KEY)
+            cache.delete(f"{CACHED_DETAIL_SENDING_KEY}_{sending.pk}_{request.user.pk}")
 
             return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
         else:

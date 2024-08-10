@@ -13,7 +13,7 @@ from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
 CACHED_MESSAGES_KEY = 'view_message'
-
+"""ключ хранилища ключей кэшей страницы списка сообщений"""
 
 # СПИСОК СООБЩЕНИЙ
 class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,

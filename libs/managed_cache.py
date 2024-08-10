@@ -46,9 +46,9 @@ class ManagedCache:
 
     @staticmethod
     def clear_data(key):
-        """Очищает кэши страницы"""
+        """Очищает кэш страницы"""
 
         key_store_list = cache.get(key)
         if key_store_list is not None:
             [cache.delete(key) for key in key_store_list]
-        key_store_list = None
+        cache.delete(key)
