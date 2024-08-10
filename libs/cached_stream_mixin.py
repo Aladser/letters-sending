@@ -8,11 +8,18 @@ class CachedStreamMixin:
     """Миксин кэширования страницы контроллера"""
 
     cached_key = None
-    __exception_message = 'Не установлен ключ cached_key класса CachedStreamMixin'
+    __exception_message = 'Не установлен ключ "cached_key" класса CachedStreamMixin'
 
     def get(self, *args, **kwargs):
+        if not CACHED_ENABLED:
+            return super().get(*args, **kwargs)
+
         if self.cached_key is None:
             raise Exception(self.__exception_message)
+
+        # если кэшируется страница объекта
+        if 'pk' in kwargs:
+            self.cached_key += '_' + str(kwargs['pk'])
 
         if CACHED_ENABLED:
             cached_data = CachedStream.get_data(self.cached_key, self.request.user.pk)
@@ -22,6 +29,9 @@ class CachedStreamMixin:
         return super().get(*args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
+        if not CACHED_ENABLED:
+            return super().render_to_response(context, **response_kwargs)
+
         if self.cached_key is None:
             raise Exception(self.__exception_message)
 

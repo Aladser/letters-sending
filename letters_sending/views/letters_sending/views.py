@@ -2,11 +2,12 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from authen.services import CustomLoginRequiredMixin, show_error
+from config.settings import CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdateForm
 from letters_sending.models import LettersSending, Status
@@ -19,7 +20,9 @@ from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
 CACHED_SENDINGS_KEY = 'view_letterssending'
-"""кэш страниц рассылок"""
+"""ключ хранилища ключей кэшей страницы списка рассылок"""
+CACHED_DETAIL_SENDING_KEY = 'detail_letterssending_'
+"""ключ хранилища ключей кэшей детальных страниц рассылок"""
 
 
 # СПИСОК РАССЫЛОК
@@ -43,8 +46,9 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
 
 
 # ДЕТАЛИ РАССЫЛКИ
-class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
+class LettersSendingDetailView(CustomLoginRequiredMixin, CachedStreamMixin, DetailView):
     model = LettersSending
+    cached_key = CACHED_DETAIL_SENDING_KEY
 
     def get_context_data(self, **kwargs):
         if not (self.request.user.has_perm(
