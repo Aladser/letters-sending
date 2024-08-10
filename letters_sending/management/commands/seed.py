@@ -1,10 +1,11 @@
+import os
+
 from django.core.management import BaseCommand
 from pytils.translit import slugify
 
 from authen.models import User
 from blog.models import Blog
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
-from libs.env import env
 
 
 class Command(BaseCommand):
@@ -119,25 +120,25 @@ class Command(BaseCommand):
             }
             clients_obj_list.append(client)
 
-        if env("MY_MAIL_1"):
+        if os.getenv("MY_MAIL_1"):
             clients_obj_list.append({
-                'email': env("MY_MAIL_1"),
+                'email': os.getenv("MY_MAIL_1"),
                 'surname': 'Антонов',
                 'name': 'Иван',
                 'patronym': 'Иванович',
                 'owner_id': 1,
             })
-        if env("MY_MAIL_2"):
+        if os.getenv("MY_MAIL_2"):
             clients_obj_list.append({
-                'email': env("MY_MAIL_2"),
+                'email': os.getenv("MY_MAIL_2"),
                 'surname': 'Антонов',
                 'name': 'Игорь',
                 'patronym': 'Игоревич',
                 'owner_id': 1,
             })
-        if env("MY_MAIL_3"):
+        if os.getenv("MY_MAIL_3"):
             clients_obj_list.append({
-                'email': env("MY_MAIL_3"),
+                'email': os.getenv("MY_MAIL_3"),
                 'surname': 'Антонов',
                 'name': 'Сергей',
                 'patronym': 'Сергеевич',
