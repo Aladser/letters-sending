@@ -24,10 +24,9 @@ class ManagedCachedMixin:
         if 'pk' in kwargs:
             self.cached_key += '_' + str(kwargs['pk'])
 
-        if CACHED_ENABLED:
-            cached_data = ManagedCache.get_data(self.cached_key, self.request.user.pk)
-            if cached_data is not None:
-                return cached_data
+        cached_data = ManagedCache.get_data(self.cached_key, self.request.user.pk)
+        if cached_data is not None:
+            return cached_data
 
         return super().get(*args, **kwargs)
 
@@ -39,6 +38,5 @@ class ManagedCachedMixin:
             raise Exception(self.__exception_message)
 
         response = render(self.request, self.template_name, context)
-        if CACHED_ENABLED:
-            ManagedCache.save_data(self.cached_key, self.request.user.pk, response)
+        ManagedCache.save_data(self.cached_key, self.request.user.pk, response)
         return response
