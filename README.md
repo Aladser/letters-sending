@@ -47,6 +47,14 @@
 + ``authen/templates`` - пользователь
 + ``blog/`` - блог 
 
-#### Скрипт рассылки
-``letters_sending/management/commands/scheduler.py`` - запуск консольной периодической задачи 
+#### Рассылка писем
+
++ *letters_sending/management/commands/scheduler.py* - запуск консольной периодической задачи рассылок
++ ``letters_sending.services.letsend_schedulrer.LettersSendingScheduler`` - встроенный планировщик рассылок
++ ``AttemptListView`` - контроллер статистики рассылок
+
+Одновременно может быть запущен только один тип рассылки
+
+
+
 
