@@ -61,7 +61,7 @@
 
 ###  Менеджер
 + ``view_client,view_message,view_letterssending,view_user`` - просмотр всех клиентов, сообщений, рассылок, пользователей
-+ ``view_custom_client,view_message,view_custom_letterssending,view_custom_user`` - просмотр своих клиентов, сообщений, рассылок, пользователей
++ ``view_custom_client,view_message,view_custom_letterssending`` - просмотр своих клиентов, сообщений, рассылок
 + ``block_user`` - блокировать пользователей
 + ``deactivate_letterssending`` - отключать рассылки
 
