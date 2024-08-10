@@ -20,7 +20,7 @@ from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
 # АВТОРИЗАЦИЯ
-class UserLoginView(LoginView):
+class CustomLoginView(LoginView):
     template_name = 'login.html'
     form_class = AuthForm
 
@@ -132,7 +132,7 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('authen:password_reset_complete')
 
 
-# СПИСОК ПОЛЬЗОВАТЕЛЙ
+# СПИСОК ПОЛЬЗОВАТЕЛЕЙ
 class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'authen.view_user'
 
