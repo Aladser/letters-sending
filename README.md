@@ -6,6 +6,7 @@
   * создание групп пользователей, разрешений групп, пользователей ```python manage.py create_users```
   * сидирование таблиц БД ```python manage.py seed```
 + для запуска встроенной периодической задачи выставить ``settings.SCHEDULER_ACTIVE = True``
++ запуск одной копии проекта - ``python manage.py runserver --noreload``
 
 ## Приложения
 + authen - Аутентификация
