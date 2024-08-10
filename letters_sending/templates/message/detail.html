@@ -2,7 +2,7 @@
 {% load custom_tags %}
 
 {% block content %}
-<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-2">
+<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-2 mb-4 shadow">
     <h3 class="mb-3">{{object.subject}}</h3>
     {% autoescape off %}<p class="w-75 text-center p-2 border-top border-bottom">{{object.content}}</p>{% endautoescape off %}
 
@@ -13,7 +13,8 @@
         {% if perms.letters_sending.delete_message %}
             <a href="{% url 'message_delete' object.pk %}?type=detail" class="btn-theme rounded d-inline-block">Удалить</a>
         {% endif %}
-        <a href="{% url 'message_list' %}?type=detail" class="btn-theme rounded d-inline-block">Назад</a>
     </div>
 </div>
+
+<a href="{% url 'message_list' %}" class="btn-theme rounded d-block w-25 mx-auto">К списку сообщений</a>
 {% endblock %}

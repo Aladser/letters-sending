@@ -12,6 +12,9 @@ from letters_sending.apps import LetterConfig
 from letters_sending.models import Attempt, LettersSending, Status, Client
 from libs.cached_stream import CachedStream
 
+CACHED_INDEX_KEY = 'index'
+"""кэш главных страниц пользователей"""
+
 
 # СПИСОК ПОПЫТОК
 class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -62,10 +65,8 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
 
 # ГЛАВНАЯ СТРАНИЦА
 def index_page(request):
-    cached_key = 'index'
-
     if CACHED_ENABLED:
-        cached_data = CachedStream.get_data(cached_key, request.user.pk)
+        cached_data = CachedStream.get_data(CACHED_INDEX_KEY, request.user.pk)
         if cached_data is not None:
             return cached_data
 
@@ -88,5 +89,5 @@ def index_page(request):
 
     response = render(request, 'index.html', context)
     if CACHED_ENABLED:
-        CachedStream.save_data(cached_key, request.user.pk, response)
+        CachedStream.save_data(CACHED_INDEX_KEY, request.user.pk, response)
     return response

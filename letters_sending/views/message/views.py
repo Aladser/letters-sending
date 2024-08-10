@@ -7,10 +7,12 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from letters_sending.services.services import OwnerListVerificationMixin
+from libs.cached_stream import CachedStream
 from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
+CACHED_MESSAGES_KEY = 'view_message'
 
 
 # СПИСОК СООБЩЕНИЙ
@@ -28,7 +30,8 @@ class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, Perm
         'title': title,
         'header': title
     }
-    cached_key = 'view_message'
+    cached_key = CACHED_MESSAGES_KEY
+
 
 # ДЕТАЛИ СООБЩЕНИЯ
 class MessageDetailView(CustomLoginRequiredMixin, DetailView):
@@ -70,6 +73,8 @@ class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Creat
             self.object = form.save()
             self.object.owner = self.request.user
             self.object.save()
+
+            CachedStream.clear_data(CACHED_MESSAGES_KEY)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -94,6 +99,8 @@ class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Updat
         context['header'] = title.capitalize()
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
         context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
+
+        CachedStream.clear_data(CACHED_MESSAGES_KEY)
 
         return context
 
@@ -120,5 +127,6 @@ class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, Delet
         else:
             context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
-        return context
+        CachedStream.clear_data(CACHED_MESSAGES_KEY)
 
+        return context

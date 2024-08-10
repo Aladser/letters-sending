@@ -12,11 +12,14 @@ from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdate
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
+from letters_sending.views.views import CACHED_INDEX_KEY
 from libs.cached_stream import CachedStream
 from libs.cached_stream_mixin import CachedStreamMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
+CACHED_SENDINGS_KEY = 'view_letterssending'
+"""кэш страниц рассылок"""
 
 
 # СПИСОК РАССЫЛОК
@@ -36,7 +39,7 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
         'css_list': ("letters_sending.css",)
     }
 
-    cached_key = 'view_letterssending'
+    cached_key = CACHED_SENDINGS_KEY
 
 
 # ДЕТАЛИ РАССЫЛКИ
@@ -80,8 +83,8 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin
             self.object.owner = self.request.user
             self.object.save()
 
-            CachedStream.clear_data('index')
-            CachedStream.clear_data('view_letterssending')
+            CachedStream.clear_data(CACHED_INDEX_KEY)
+            CachedStream.clear_data(CACHED_SENDINGS_KEY)
 
             if self.object.status.name == "launched":
                 # запуск задачи
@@ -120,8 +123,8 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin
                     send_letters(self.object)
             self.object.save()
 
-            CachedStream.clear_data('index')
-            CachedStream.clear_data('view_letterssending')
+            CachedStream.clear_data(CACHED_INDEX_KEY)
+            CachedStream.clear_data(CACHED_SENDINGS_KEY)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -155,11 +158,10 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
         context['object_type_name'] = "рассылку"
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
-        CachedStream.clear_data('index')
-        CachedStream.clear_data('view_letterssending')
+        CachedStream.clear_data(CACHED_INDEX_KEY)
+        CachedStream.clear_data(CACHED_SENDINGS_KEY)
 
         return context
-
 
 # ВЫКЛЮЧИТЬ АКТИВНУЮ РАССЫЛКУ
 @login_required
@@ -176,8 +178,8 @@ def deactivate_letterssending(request):
             sending.status = Status.objects.get(name='completed')
             sending.save()
 
-            CachedStream.clear_data('index')
-            CachedStream.clear_data('view_letterssending')
+            CachedStream.clear_data(CACHED_INDEX_KEY)
+            CachedStream.clear_data(CACHED_SENDINGS_KEY)
 
             return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
         else:
