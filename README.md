@@ -12,7 +12,7 @@
 + letters_sending - Почтовые рассылки
 + blog - Блоги
 
-## Модели (letters_sending/models.py)
+## Модели
 * authen: ``User``, ``Country``, 
 * letters_sending: ``Message``, ``Client``, ``LettersSending``,
   + ``DatePeriod`` - Интервал отправки,
@@ -35,17 +35,17 @@
 * blog: ``BlogListView``, ``BlogDetailView``
  
 ## Шаблоны
-+ ``basic.html`` - базовый шаблон
-+ ``index.html`` - главная страница
-+ ``attempt_list.html`` - статистика попыток рассылки
-+ ``confirm_delete.html`` - форма удаления объекта
-+ ``form.html`` - форма заполнения объекта
-+ ``components/`` - компоненты
-+ ``client/`` - клиент
-+ ``message/`` - сообщение
-+ ``letters_sending/`` - рассылка
-+ ``authen/templates`` - пользователь
-+ ``blog/`` - блог 
++ ``letters_sending .. basic.html`` - базовый шаблон
++ ``letters_sending .. index.html`` - главная страница
++ ``letters_sending .. attempt_list.html`` - статистика попыток рассылки
++ ``letters_sending .. confirm_delete.html`` - форма удаления объекта
++ ``letters_sending .. form.html`` - форма заполнения объекта
++ ``letters_sending .. components/`` - компоненты
++ ``letters_sending .. client/`` - клиент
++ ``letters_sending .. message/`` - сообщение
++ ``letters_sending .. letters_sending/`` - рассылка
++ ``authen .. `` - пользователь
++ ``blog .. blog/`` - блог 
 
 ## Рассылка писем
 
