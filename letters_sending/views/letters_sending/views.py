@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -12,13 +13,21 @@ from letters_sending.forms import LettersSendingCreateForm, LettersSendingUpdate
 from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
+from letters_sending.views.views import CACHED_INDEX_KEY
 from libs.custom_formatter import CustomFormatter
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
+CACHED_SENDINGS_KEY = 'view_letterssending'
+"""ключ хранилища ключей кэшей страницы списка рассылок"""
+CACHED_DETAIL_SENDING_KEY = 'detail_letterssending_'
+"""ключ хранилища ключей кэшей детальных страниц рассылок"""
 
 
 # СПИСОК РАССЫЛОК
-class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                             ManagedCachedMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_letterssending"
     list_permission = app_name + '.view_letterssending'
@@ -32,15 +41,13 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
         'css_list': ("letters_sending.css",)
     }
 
-    def get(self, *args, **kwargs):
-        if str(self.request.user) == 'AnonymousUser':
-            return redirect(reverse('authen:login'))
-        return super().get(*args, **kwargs)
+    cached_key = CACHED_SENDINGS_KEY
 
 
 # ДЕТАЛИ РАССЫЛКИ
-class LettersSendingDetailView(CustomLoginRequiredMixin, DetailView):
+class LettersSendingDetailView(CustomLoginRequiredMixin, ManagedCachedMixin, DetailView):
     model = LettersSending
+    cached_key = CACHED_DETAIL_SENDING_KEY
 
     def get_context_data(self, **kwargs):
         if not (self.request.user.has_perm(
@@ -79,6 +86,9 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin
             self.object.owner = self.request.user
             self.object.save()
 
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
+
             if self.object.status.name == "launched":
                 # запуск задачи
                 send_letters(self.object)
@@ -115,6 +125,10 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin
                     # если время запуска просрочено
                     send_letters(self.object)
             self.object.save()
+
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
+            cache.delete(f"{CACHED_DETAIL_SENDING_KEY}_{self.object.pk}_{self.request.user.pk}")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -148,6 +162,9 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
         context['object_type_name'] = "рассылку"
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
+        ManagedCache.clear_data(CACHED_INDEX_KEY)
+        ManagedCache.clear_data(CACHED_SENDINGS_KEY)
+
         return context
 
 
@@ -165,6 +182,11 @@ def deactivate_letterssending(request):
         if sending.status.name == 'launched':
             sending.status = Status.objects.get(name='completed')
             sending.save()
+
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
+            cache.delete(f"{CACHED_DETAIL_SENDING_KEY}_{sending.pk}_{request.user.pk}")
+
             return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
         else:
             return show_error(request, f'Ошибка: рассылка не запущена')

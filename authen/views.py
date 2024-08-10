@@ -1,10 +1,11 @@
 from secrets import token_hex
 from urllib.request import Request
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -19,7 +20,7 @@ from config.settings import APP_NAME, EMAIL_HOST_USER
 
 
 # АВТОРИЗАЦИЯ
-class UserLoginView(LoginView):
+class CustomLoginView(LoginView):
     template_name = 'login.html'
     form_class = AuthForm
 
@@ -28,6 +29,13 @@ class UserLoginView(LoginView):
         'header': title.title(),
         'title': title
     }
+
+
+# ВЫХОД ИЗ СИСТЕМЫ
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('index')
 
 
 # РЕГИСТРАЦИЯ
@@ -73,11 +81,11 @@ class ProfileView(CustomLoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileForm
     template_name = 'user_form.html'
-    success_url = reverse_lazy('product:list')
+    success_url = reverse_lazy('letter_sending_list')
 
-    title = "профиль пользователя"
+    title = "Профиль пользователя"
     extra_context = {
-        'header': title.title(),
+        'header': title,
         'title': title
     }
 
@@ -124,7 +132,7 @@ class CustomUserPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('authen:password_reset_complete')
 
 
-# СПИСОК ПОЛЬЗОВАТЕЛЙ
+# СПИСОК ПОЛЬЗОВАТЕЛЕЙ
 class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'authen.view_user'
 

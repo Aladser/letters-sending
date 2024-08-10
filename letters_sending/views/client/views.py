@@ -7,11 +7,17 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from letters_sending.services.services import OwnerVerificationMixin, OwnerListVerificationMixin
+from letters_sending.views.views import CACHED_INDEX_KEY
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
+CACHED_CLIENTS_KEY = 'view_client'
+"""ключ хранилища ключей кэшей страницы списка клиентов"""
 
 # СПИСОК КЛИЕНТОВ
-class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                     ManagedCachedMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_client"
     list_permission = app_name + '.view_client'
@@ -24,6 +30,7 @@ class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, Permi
         'title': title,
         'header': title
     }
+    cached_key = CACHED_CLIENTS_KEY
 
 
 # СОЗДАТЬ КЛИЕНТА
@@ -46,6 +53,9 @@ class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Create
             self.object = form.save()
             self.object.owner = self.request.user
             self.object.save()
+
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_CLIENTS_KEY)
         return super().form_valid(form)
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -75,6 +85,8 @@ class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerV
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
+        ManagedCache.clear_data(CACHED_CLIENTS_KEY)
+
         return context
 
 
@@ -95,3 +107,8 @@ class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerV
         'object_type_name': "клиента"
     }
 
+    def form_valid(self, form):
+        print('form_valid')
+        if form.is_valid():
+            ManagedCache.clear_data(CACHED_CLIENTS_KEY)
+            return super().form_valid(form)

@@ -1,9 +1,9 @@
 from django.urls import path
 
 from letters_sending.views import AttemptListView
+from letters_sending.views.client import *
 from letters_sending.views.letters_sending import *
 from letters_sending.views.message import *
-from letters_sending.views.client import *
 from letters_sending.views.views import index_page
 
 urlpatterns = [

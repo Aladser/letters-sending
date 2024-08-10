@@ -1,15 +1,16 @@
 from django.views.generic import ListView, DetailView
 
-from authen.services import CustomLoginRequiredMixin
 from blog.models import Blog
+from libs.managed_cache_mixin import ManagedCachedMixin
 
 TEMPLATE_FOLDER = "blog/"
 
 
 # СПИСОК БЛОГОВ
-class BlogListView(ListView):
+class BlogListView(ManagedCachedMixin, ListView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "list.html"
+    cached_key = 'view_blog'
 
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True).order_by('-published_at')

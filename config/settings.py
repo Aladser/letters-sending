@@ -117,5 +117,15 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s"
 SCHEDULER_INTERVAL = 15
 SCHEDULER_ACTIVE = False
 
-
+# КЭШИРОВАНИЕ
+CACHED_ENABLED = True
+CACHED_TIME = 60
+if CACHED_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('CACHES_LOCATION'),
+            "TIMEOUT": CACHED_TIME
+        }
+    }
 

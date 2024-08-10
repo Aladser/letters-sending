@@ -7,13 +7,17 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from letters_sending.services.services import OwnerListVerificationMixin
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
-
+CACHED_MESSAGES_KEY = 'view_message'
+"""ключ хранилища ключей кэшей страницы списка сообщений"""
 
 # СПИСОК СООБЩЕНИЙ
-class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin, ListView):
+class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
+                      ManagedCachedMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_message"
     list_permission = app_name + '.view_message'
@@ -26,6 +30,7 @@ class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, Perm
         'title': title,
         'header': title
     }
+    cached_key = CACHED_MESSAGES_KEY
 
 
 # ДЕТАЛИ СООБЩЕНИЯ
@@ -68,6 +73,8 @@ class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Creat
             self.object = form.save()
             self.object.owner = self.request.user
             self.object.save()
+
+            ManagedCache.clear_data(CACHED_MESSAGES_KEY)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -92,6 +99,8 @@ class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Updat
         context['header'] = title.capitalize()
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
         context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
+
+        ManagedCache.clear_data(CACHED_MESSAGES_KEY)
 
         return context
 
@@ -118,5 +127,6 @@ class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, Delet
         else:
             context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
-        return context
+        ManagedCache.clear_data(CACHED_MESSAGES_KEY)
 
+        return context

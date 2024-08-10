@@ -4,7 +4,7 @@ from django.forms import BooleanField
 class CustomFormatter:
     @staticmethod
     def get_form_required_field_labels(form) -> tuple:
-        """Получает обязательные поля формы"""
+        """Получает подписи обязательных полей формы"""
 
         return tuple(field.label for field in form.fields.values() if field.required)
 

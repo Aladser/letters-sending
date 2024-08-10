@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-4">
+<div class="d-flex flex-column justify-content-center align-items-center bg-white box-shadow-white p-4 mb-4 shadow">
     <div class="text-center mb-2">
         <div class="fw-bolder">Тема сообщения</div>
         <p class="border-2 border-bottom p-1">{{object.message}}</p>
@@ -52,4 +52,5 @@
     </div>
 </div>
 
+<a href="{% url 'letter_sending_list' %}" class="btn-theme rounded d-block w-25 mx-auto">К списку рассылок</a>
 {% endblock %}
