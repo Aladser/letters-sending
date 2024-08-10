@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -129,6 +130,7 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin
 
             CachedStream.clear_data(CACHED_INDEX_KEY)
             CachedStream.clear_data(CACHED_SENDINGS_KEY)
+            cache.delete(f"{CACHED_DETAIL_SENDING_KEY}_{self.object.pk}_{self.request.user.pk}")
         return super().form_valid(form)
 
     def get_success_url(self):
