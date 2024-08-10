@@ -51,7 +51,7 @@
 
 + *letters_sending/management/commands/scheduler.py* - запуск консольной периодической задачи рассылок
 + ``letters_sending.services.letsend_schedulrer.LettersSendingScheduler`` - встроенный планировщик рассылок
-+ ``AttemptListView`` - контроллер статистики рассылок
++ ``letters_sending.views.views.AttemptListView`` - контроллер статистики рассылок
 
 Одновременно может быть запущен только один тип рассылки
 
