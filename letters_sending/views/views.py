@@ -10,7 +10,7 @@ from blog.models import Blog
 from config.settings import APP_NAME, CACHED_ENABLED
 from letters_sending.apps import LetterConfig
 from letters_sending.models import Attempt, LettersSending, Status, Client
-from libs.cached_stream import CachedStream
+from libs.managed_cache import ManagedCache
 
 CACHED_INDEX_KEY = 'index'
 """кэш главных страниц пользователей"""
@@ -66,7 +66,7 @@ class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListVie
 # ГЛАВНАЯ СТРАНИЦА
 def index_page(request):
     if CACHED_ENABLED:
-        cached_data = CachedStream.get_data(CACHED_INDEX_KEY, request.user.pk)
+        cached_data = ManagedCache.get_data(CACHED_INDEX_KEY, request.user.pk)
         if cached_data is not None:
             return cached_data
 
@@ -89,5 +89,5 @@ def index_page(request):
 
     response = render(request, 'index.html', context)
     if CACHED_ENABLED:
-        CachedStream.save_data(CACHED_INDEX_KEY, request.user.pk, response)
+        ManagedCache.save_data(CACHED_INDEX_KEY, request.user.pk, response)
     return response

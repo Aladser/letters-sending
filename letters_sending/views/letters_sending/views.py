@@ -15,8 +15,8 @@ from letters_sending.models import LettersSending, Status
 from letters_sending.services.send_letters import send_letters
 from letters_sending.services.services import OwnerListVerificationMixin
 from letters_sending.views.views import CACHED_INDEX_KEY
-from libs.cached_stream import CachedStream
-from libs.cached_stream_mixin import CachedStreamMixin
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
@@ -28,7 +28,7 @@ CACHED_DETAIL_SENDING_KEY = 'detail_letterssending_'
 
 # СПИСОК РАССЫЛОК
 class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
-                             CachedStreamMixin, ListView):
+                             ManagedCachedMixin, ListView):
 
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_letterssending"
@@ -47,7 +47,7 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
 
 
 # ДЕТАЛИ РАССЫЛКИ
-class LettersSendingDetailView(CustomLoginRequiredMixin, CachedStreamMixin, DetailView):
+class LettersSendingDetailView(CustomLoginRequiredMixin, ManagedCachedMixin, DetailView):
     model = LettersSending
     cached_key = CACHED_DETAIL_SENDING_KEY
 
@@ -88,8 +88,8 @@ class LettersSendingCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin
             self.object.owner = self.request.user
             self.object.save()
 
-            CachedStream.clear_data(CACHED_INDEX_KEY)
-            CachedStream.clear_data(CACHED_SENDINGS_KEY)
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
 
             if self.object.status.name == "launched":
                 # запуск задачи
@@ -128,8 +128,8 @@ class LettersSendingUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin
                     send_letters(self.object)
             self.object.save()
 
-            CachedStream.clear_data(CACHED_INDEX_KEY)
-            CachedStream.clear_data(CACHED_SENDINGS_KEY)
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
             cache.delete(f"{CACHED_DETAIL_SENDING_KEY}_{self.object.pk}_{self.request.user.pk}")
         return super().form_valid(form)
 
@@ -164,8 +164,8 @@ class LettersSendingDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin
         context['object_type_name'] = "рассылку"
         context['back_url'] = reverse_lazy("letter_sending_detail", kwargs={"pk": self.object.pk})
 
-        CachedStream.clear_data(CACHED_INDEX_KEY)
-        CachedStream.clear_data(CACHED_SENDINGS_KEY)
+        ManagedCache.clear_data(CACHED_INDEX_KEY)
+        ManagedCache.clear_data(CACHED_SENDINGS_KEY)
 
         return context
 
@@ -184,8 +184,8 @@ def deactivate_letterssending(request):
             sending.status = Status.objects.get(name='completed')
             sending.save()
 
-            CachedStream.clear_data(CACHED_INDEX_KEY)
-            CachedStream.clear_data(CACHED_SENDINGS_KEY)
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_SENDINGS_KEY)
 
             return redirect(reverse('letter_sending_detail', kwargs={'pk': sending.pk}))
         else:

@@ -1,13 +1,13 @@
 from django.views.generic import ListView, DetailView
 
 from blog.models import Blog
-from libs.cached_stream_mixin import CachedStreamMixin
+from libs.managed_cache_mixin import ManagedCachedMixin
 
 TEMPLATE_FOLDER = "blog/"
 
 
 # СПИСОК БЛОГОВ
-class BlogListView(CachedStreamMixin, ListView):
+class BlogListView(ManagedCachedMixin, ListView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "list.html"
     cached_key = 'view_blog'

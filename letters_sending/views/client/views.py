@@ -8,8 +8,8 @@ from letters_sending.forms import ClientForm
 from letters_sending.models import Client
 from letters_sending.services.services import OwnerVerificationMixin, OwnerListVerificationMixin
 from letters_sending.views.views import CACHED_INDEX_KEY
-from libs.cached_stream import CachedStream
-from libs.cached_stream_mixin import CachedStreamMixin
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
 CACHED_CLIENTS_KEY = 'view_client'
@@ -17,7 +17,7 @@ CACHED_CLIENTS_KEY = 'view_client'
 
 # СПИСОК КЛИЕНТОВ
 class ClientListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
-                     CachedStreamMixin, ListView):
+                     ManagedCachedMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_client"
     list_permission = app_name + '.view_client'
@@ -54,8 +54,8 @@ class ClientCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Create
             self.object.owner = self.request.user
             self.object.save()
 
-            CachedStream.clear_data(CACHED_INDEX_KEY)
-            CachedStream.clear_data(CACHED_CLIENTS_KEY)
+            ManagedCache.clear_data(CACHED_INDEX_KEY)
+            ManagedCache.clear_data(CACHED_CLIENTS_KEY)
         return super().form_valid(form)
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -85,7 +85,7 @@ class ClientUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerV
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
-        CachedStream.clear_data(CACHED_CLIENTS_KEY)
+        ManagedCache.clear_data(CACHED_CLIENTS_KEY)
 
         return context
 
@@ -110,5 +110,5 @@ class ClientDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, OwnerV
     def form_valid(self, form):
         print('form_valid')
         if form.is_valid():
-            CachedStream.clear_data(CACHED_CLIENTS_KEY)
+            ManagedCache.clear_data(CACHED_CLIENTS_KEY)
             return super().form_valid(form)

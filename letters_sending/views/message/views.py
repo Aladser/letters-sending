@@ -7,8 +7,8 @@ from letters_sending.apps import LetterConfig
 from letters_sending.forms import MessageForm
 from letters_sending.models import Message
 from letters_sending.services.services import OwnerListVerificationMixin
-from libs.cached_stream import CachedStream
-from libs.cached_stream_mixin import CachedStreamMixin
+from libs.managed_cache import ManagedCache
+from libs.managed_cache_mixin import ManagedCachedMixin
 from libs.custom_formatter import CustomFormatter
 
 TEMPLATE_FOLDER = "message/"
@@ -17,7 +17,7 @@ CACHED_MESSAGES_KEY = 'view_message'
 
 # СПИСОК СООБЩЕНИЙ
 class MessageListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
-                      CachedStreamMixin, ListView):
+                      ManagedCachedMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_message"
     list_permission = app_name + '.view_message'
@@ -74,7 +74,7 @@ class MessageCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Creat
             self.object.owner = self.request.user
             self.object.save()
 
-            CachedStream.clear_data(CACHED_MESSAGES_KEY)
+            ManagedCache.clear_data(CACHED_MESSAGES_KEY)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -100,7 +100,7 @@ class MessageUpdateView(CustomLoginRequiredMixin, PermissionRequiredMixin, Updat
         context["required_fields"] = CustomFormatter.get_form_required_field_labels(context["form"])
         context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
-        CachedStream.clear_data(CACHED_MESSAGES_KEY)
+        ManagedCache.clear_data(CACHED_MESSAGES_KEY)
 
         return context
 
@@ -127,6 +127,6 @@ class MessageDeleteView(CustomLoginRequiredMixin, PermissionRequiredMixin, Delet
         else:
             context['back_url'] = reverse_lazy("message_detail", kwargs={"pk": self.object.pk})
 
-        CachedStream.clear_data(CACHED_MESSAGES_KEY)
+        ManagedCache.clear_data(CACHED_MESSAGES_KEY)
 
         return context

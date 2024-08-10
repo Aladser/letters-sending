@@ -1,11 +1,11 @@
 from django.shortcuts import render
 
 from config.settings import CACHED_ENABLED
-from libs.cached_stream import CachedStream
+from libs.managed_cache import ManagedCache
 
 
-class CachedStreamMixin:
-    """Миксин кэширования страницы контроллера"""
+class ManagedCachedMixin:
+    """Миксин управляемоего кэша"""
 
     cached_key = None
     __exception_message = 'Не установлен ключ "cached_key" класса CachedStreamMixin'
@@ -22,7 +22,7 @@ class CachedStreamMixin:
             self.cached_key += '_' + str(kwargs['pk'])
 
         if CACHED_ENABLED:
-            cached_data = CachedStream.get_data(self.cached_key, self.request.user.pk)
+            cached_data = ManagedCache.get_data(self.cached_key, self.request.user.pk)
             if cached_data is not None:
                 return cached_data
 
@@ -37,5 +37,5 @@ class CachedStreamMixin:
 
         response = render(self.request, self.template_name, context)
         if CACHED_ENABLED:
-            CachedStream.save_data(self.cached_key, self.request.user.pk, response)
+            ManagedCache.save_data(self.cached_key, self.request.user.pk, response)
         return response

@@ -1,8 +1,8 @@
 from django.core.cache import cache
 
 
-class CachedStream:
-    """Класс чтения и записи кэша"""
+class ManagedCache:
+    """Управляемый кэш"""
 
     @staticmethod
     def get_data(key, pk):
@@ -52,5 +52,3 @@ class CachedStream:
         if key_store_list is not None:
             [cache.delete(key) for key in key_store_list]
         key_store_list = None
-
-
