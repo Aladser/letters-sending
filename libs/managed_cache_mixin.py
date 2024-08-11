@@ -4,7 +4,7 @@ from config.settings import CACHED_ENABLED
 from libs.managed_cache import ManagedCache
 
 
-class ManagedCachedMixin:
+class ManagedCacheMixin:
     """
         Миксин управляемоего кэша
         Заменяет get-,render_to_response-методы CBV-контроллера

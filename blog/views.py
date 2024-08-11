@@ -1,14 +1,14 @@
 from django.views.generic import ListView, DetailView
 
 from blog.models import Blog
-from libs.managed_cache_mixin import ManagedCachedMixin
+from libs.managed_cache_mixin import ManagedCacheMixin
 
 TEMPLATE_FOLDER = "blog/"
 CACHED_DETAIL_BLOG_KEY = 'detail_letterssending_'
 """ключ хранилища ключей кэшей детальных страниц блогов"""
 
 # СПИСОК БЛОГОВ
-class BlogListView(ManagedCachedMixin, ListView):
+class BlogListView(ManagedCacheMixin, ListView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "list.html"
     cached_key = 'view_blog'
@@ -24,7 +24,7 @@ class BlogListView(ManagedCachedMixin, ListView):
 
 
 # ДЕТАЛИ БЛОГА
-class BlogDetailView(ManagedCachedMixin, DetailView):
+class BlogDetailView(ManagedCacheMixin, DetailView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "detail.html"
     cached_key = CACHED_DETAIL_BLOG_KEY

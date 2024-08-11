@@ -16,7 +16,7 @@ from letters_sending.services.services import OwnerListVerificationMixin
 from letters_sending.views.views import CACHED_INDEX_KEY
 from libs.custom_formatter import CustomFormatter
 from libs.managed_cache import ManagedCache
-from libs.managed_cache_mixin import ManagedCachedMixin
+from libs.managed_cache_mixin import ManagedCacheMixin
 
 TEMPLATE_FOLDER = LetterConfig.name + '/'
 CACHED_SENDINGS_KEY = 'view_letterssending'
@@ -27,7 +27,7 @@ CACHED_DETAIL_SENDING_KEY = 'detail_letterssending_'
 
 # СПИСОК РАССЫЛОК
 class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixin, PermissionRequiredMixin,
-                             ManagedCachedMixin, ListView):
+                             ManagedCacheMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_letterssending"
     list_permission = app_name + '.view_letterssending'
@@ -45,7 +45,7 @@ class LettersSendingListView(CustomLoginRequiredMixin, OwnerListVerificationMixi
 
 
 # ДЕТАЛИ РАССЫЛКИ
-class LettersSendingDetailView(CustomLoginRequiredMixin, ManagedCachedMixin, DetailView):
+class LettersSendingDetailView(CustomLoginRequiredMixin, ManagedCacheMixin, DetailView):
     model = LettersSending
     cached_key = CACHED_DETAIL_SENDING_KEY
 

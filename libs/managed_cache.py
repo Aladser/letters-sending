@@ -38,6 +38,8 @@ class ManagedCache:
 
         # обновляет хранилище ключей
         key_store_list = cache.get(key)
+        if key_store_list is None:
+            key_store_list = []
         key_store_list.append(user_key)
         cache.set(key, key_store_list)
 
