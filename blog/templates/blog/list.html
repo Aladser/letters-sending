@@ -15,9 +15,8 @@
                 <p class="card-text">{{object.content|truncatechars:120}}</p>
             </div>
 
-            <div>
-                <div class="card-text text-center fst-italic">Публикация: {{object.published_at}}</div>
-                <div class="card-text text-center fst-italic">Просмотров: {{object.views_count}}</div>
+            <div class="pb-1">
+                <div class="card-text text-center fst-italic mb-2">Публикация: {{object.published_at}}</div>
                 <a href="{% url 'blog:detail' object.pk %}" class="btn-theme rounded d-block w-50 mx-auto">Подробнее</a>
             </div>
           </div>
