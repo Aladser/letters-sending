@@ -87,3 +87,21 @@
 + главная страница
 + список рассылок, сообщений, клиентов, блогов
 + детальная страница рассылок, блогов
+
+## Главная страница
+![main](/readme/main.png)
+
+## Профиль пользователя
+![profile](/readme/user_profile.png)
+
+## Рассылки 
+![sendings](/readme/sendings.png)
+
+## Статистика рассылок
+![stat](/readme/stat.png)
+
+## Клиенты
+![clients](/readme/clients.png)
+
+## Блоги
+![blogs](/readme/blogs.png)
