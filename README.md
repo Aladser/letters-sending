@@ -103,5 +103,8 @@
 ## Клиенты
 ![clients](/readme/clients.png)
 
+## Сообщения
+![messages](/readme/messages.png)
+
 ## Блоги
 ![blogs](/readme/blogs.png)
