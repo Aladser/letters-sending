@@ -1,17 +1,13 @@
 from django.views.generic import ListView, DetailView
 from blog.models import Blog
-from libs.managed_cache_mixin import ManagedCacheMixin
 
 TEMPLATE_FOLDER = "blog/"
-CACHED_LIST_BLOG_KEY = 'view_blog'
-"""ключ хранилища ключей кэшей списка блогов"""
 
 
 # СПИСОК БЛОГОВ
-class BlogListView(ManagedCacheMixin, ListView):
+class BlogListView(ListView):
     model = Blog
     template_name = TEMPLATE_FOLDER + "list.html"
-    cached_key = CACHED_LIST_BLOG_KEY
     extra_context = {
         'title': "Блоги",
         'header': "Блоги"
