@@ -6,7 +6,7 @@ from pytils.translit import slugify
 from authen.models import User
 from blog.models import Blog
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
-from libs.seed_table import seed_table
+from libs.seeding import Seeding
 
 
 class Command(BaseCommand):
@@ -92,9 +92,9 @@ class Command(BaseCommand):
 
         Attempt.truncate()
         # Периодичность рассылки
-        seed_table(DatePeriod, self.period_list)
+        Seeding.seed_table(DatePeriod, self.period_list)
         # -Статус рассылки
-        seed_table(Status, self.status_list)
+        Seeding.seed_table(Status, self.status_list)
 
         # Клиенты
         clients_obj_list = []
@@ -140,7 +140,7 @@ class Command(BaseCommand):
             })
         # -----/МОИ ПОЧТОВЫЕ ЯЩИКИ
 
-        seed_table(Client, clients_obj_list)
+        Seeding.seed_table(Client, clients_obj_list)
 
 
         # -----------------------------
@@ -163,11 +163,11 @@ class Command(BaseCommand):
                 'owner_id': 3
             }
             message_obj_list.append(message)
-        seed_table(Message, message_obj_list)
+        Seeding.seed_table(Message, message_obj_list)
 
 
         # Рассылки
-        seed_table(LettersSending, self.sending_obj_list)
+        Seeding.seed_table(LettersSending, self.sending_obj_list)
 
         # -----------------------------
         # --------Блоги------------
@@ -182,6 +182,6 @@ class Command(BaseCommand):
         blog_obj_list[0]['image'] = 'images/a1.jpg'
         blog_obj_list[1]['image'] = 'images/a2.jpg'
         blog_obj_list[2]['image'] = 'images/a3.jpg'
-        seed_table(Blog,  blog_obj_list)
+        Seeding.seed_table(Blog,  blog_obj_list)
 
 

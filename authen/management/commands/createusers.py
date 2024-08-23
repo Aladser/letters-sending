@@ -5,8 +5,7 @@ from django.core.management import BaseCommand
 from authen.models import User
 from blog.models import Blog
 from letters_sending.models import LettersSending, Client, Message
-from libs.seed_table import seed_table
-from libs.seed_users import seed_users
+from libs.seeding import Seeding
 
 
 class Command(BaseCommand):
@@ -132,7 +131,7 @@ class Command(BaseCommand):
         }
 
         User.truncate()
-        seed_users(User, self.user_obj_list, self.password)
+        Seeding.seed_users(User, self.user_obj_list, self.password)
         for user in User.objects.all():
             if user.email in user_groups:
                 user.groups.add(user_groups[user.email])
