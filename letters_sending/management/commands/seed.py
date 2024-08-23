@@ -6,6 +6,7 @@ from pytils.translit import slugify
 from authen.models import User
 from blog.models import Blog
 from letters_sending.models import Message, Client, DatePeriod, Status, LettersSending, Attempt
+from libs.seed_table import seed_table
 
 
 class Command(BaseCommand):
@@ -78,32 +79,24 @@ class Command(BaseCommand):
         'В Москве проходит тендер на строительство здания. Проект представляет немецкая компания. Смета 10 миллионов. Затем турецкая компания – 5 миллионов. Подходит черед российской компании. У них смета 15 миллионов. - Почему так много? - Ну, как же? 5 миллионов нам, 5 миллионов вам и 5 туркам, чтобы строили. И они выигрывают тендер!'
     ]
 
+    # рассылки
+    sending_obj_list = [
+        {'message_id': 1, 'owner_id': 1, 'period_id': 1},
+        {'message_id': 2, 'owner_id': 2, 'period_id': 1},
+        {'message_id': 3, 'owner_id': 3, 'period_id': 1}
+    ]
+
     def handle(self, *args, **kwargs):
         if User.objects.all().count() == 0:
             raise Exception('Пользователи не найдены')
 
         Attempt.truncate()
+        # Периодичность рассылки
+        seed_table(DatePeriod, self.period_list)
+        # -Статус рассылки
+        seed_table(Status, self.status_list)
 
-
-        # -----------------------------
-        # ----Периодичность рассылки---
-        # -----------------------------
-        DatePeriod.objects.all().delete()
-        period_create_list = [DatePeriod(**params) for params in self.period_list]
-        DatePeriod.objects.bulk_create(period_create_list)
-
-
-        # -----------------------------
-        # -------Статус рассылки-------
-        # -----------------------------
-        Status.objects.all().delete()
-        status_create_list = [Status(**params) for params in self.status_list]
-        Status.objects.bulk_create(status_create_list)
-
-
-        # -----------------------------
-        # ------------Клиенты----------
-        # -----------------------------
+        # Клиенты
         clients_obj_list = []
         for i in range(len(self.clients_list)):
             surname = slugify(self.clients_list[i]['surname'])
@@ -120,6 +113,7 @@ class Command(BaseCommand):
             }
             clients_obj_list.append(client)
 
+        # -----МОИ ПОЧТОВЫЕ ЯЩИКИ----
         if os.getenv("MY_MAIL_1"):
             clients_obj_list.append({
                 'email': os.getenv("MY_MAIL_1"),
@@ -144,10 +138,9 @@ class Command(BaseCommand):
                 'patronym': 'Сергеевич',
                 'owner_id': 1,
             })
+        # -----/МОИ ПОЧТОВЫЕ ЯЩИКИ
 
-        Client.truncate()
-        client_create_list = [Client(**params) for params in clients_obj_list]
-        Client.objects.bulk_create(client_create_list)
+        seed_table(Client, clients_obj_list)
 
 
         # -----------------------------
@@ -170,23 +163,11 @@ class Command(BaseCommand):
                 'owner_id': 3
             }
             message_obj_list.append(message)
-
-        Message.truncate()
-        message_create_list = [Message(**params) for params in message_obj_list]
-        Message.objects.bulk_create(message_create_list)
+        seed_table(Message, message_obj_list)
 
 
-        # -----------------------------
-        # --------Рассылки------------
-        # -----------------------------
-        sending_obj_list = [
-            {'message_id':1, 'owner_id':1, 'period_id':1},
-            {'message_id':2, 'owner_id':2, 'period_id':1},
-            {'message_id':3, 'owner_id':3, 'period_id':1}
-        ]
-        LettersSending.truncate()
-        letters_sending_list = [LettersSending(**params) for params in sending_obj_list]
-        LettersSending.objects.bulk_create(letters_sending_list)
+        # Рассылки
+        seed_table(LettersSending, self.sending_obj_list)
 
         # -----------------------------
         # --------Блоги------------
@@ -198,12 +179,9 @@ class Command(BaseCommand):
                 'content': self.blog_content_list[i],
             }
             blog_obj_list.append(blog)
-
         blog_obj_list[0]['image'] = 'images/a1.jpg'
         blog_obj_list[1]['image'] = 'images/a2.jpg'
         blog_obj_list[2]['image'] = 'images/a3.jpg'
+        seed_table(Blog,  blog_obj_list)
 
-        Blog.truncate()
-        blog_create_list = [Blog(**params) for params in blog_obj_list]
-        Blog.objects.bulk_create(blog_create_list)
 
