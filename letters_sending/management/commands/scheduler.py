@@ -16,4 +16,4 @@ class Command(BaseCommand):
         except SchedulerAlreadyRunningError as e:
             print("Активен встроенный планировщик рассылки писем")
         except KeyboardInterrupt:
-            print('\nКонсольный планировщик рассылки писем остановлен')
+            print('\nКонсольный планировщик рассылок писем остановлен')

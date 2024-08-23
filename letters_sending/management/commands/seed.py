@@ -82,7 +82,7 @@ class Command(BaseCommand):
         if User.objects.all().count() == 0:
             raise Exception('Пользователи не найдены')
 
-        Attempt.objects.all().delete()
+        Attempt.truncate()
 
 
         # -----------------------------

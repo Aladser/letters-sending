@@ -9,6 +9,41 @@ from libs.seed_table import seed_table
 
 
 class Command(BaseCommand):
+    country_obj_list = [
+        {'name': 'russia', 'description': 'Россия'},
+        {'name': 'ukraine', 'description': 'Украина'},
+        {'name': 'belarus', 'description': 'Беларусь'},
+        {'name': 'kazakhstan', 'description': 'Казахстан'},
+        {'name': 'armenia', 'description': 'Армения'},
+    ]
+
+    user_obj_list = [
+        {
+            'email': 'admin@test.ru',
+            'first_name': 'Админ',
+            'last_name': 'Админов',
+            'is_superuser': True,
+            'is_staff': True
+        },
+        {
+            'email': 'user@test.ru',
+            'first_name': 'Пользователь',
+            'last_name': 'Обычный'
+        },
+        {
+            'email': 'manager@test.ru',
+            'first_name': 'Менеджер',
+            'last_name': 'Интерфейса',
+            'is_staff': True
+        },
+        {
+            'email': 'bloger@test.ru',
+            'first_name': 'Блогер',
+            'last_name': 'Великий',
+            'is_staff': True
+        }
+    ]
+
     def handle(self, *args, **kwargs):
         Group.objects.all().delete()
 
@@ -19,19 +54,19 @@ class Command(BaseCommand):
         user_content_type = ContentType.objects.get_for_model(User)
         blog_content_type = ContentType.objects.get_for_model(Blog)
 
-        # разрешения
-        admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
-        view_owner_client_perm = Permission.objects.get(codename='view_owner_client', content_type=client_content_type)
-        view_owner_message_perm = Permission.objects.get(codename='view_owner_message', content_type=message_content_type)
-        view_owner_letterssending_perm = Permission.objects.get(codename='view_owner_letterssending', content_type=letters_sending_content_type)
-        view_owner_stat_letterssending_perm = Permission.objects.get(codename='view_owner_stat_letterssending', content_type=letters_sending_content_type)
-
         """
         view_*_perm - права на просмотр списка объектов
         view_owner_*_perm - доступ к ListView - контроллерам
         deactivate_letterssending - выключить рассылку
         block_user - блокировать пользователя
         """
+
+        # разрешения
+        admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
+        view_owner_client_perm = Permission.objects.get(codename='view_owner_client', content_type=client_content_type)
+        view_owner_message_perm = Permission.objects.get(codename='view_owner_message', content_type=message_content_type)
+        view_owner_letterssending_perm = Permission.objects.get(codename='view_owner_letterssending', content_type=letters_sending_content_type)
+        view_owner_stat_letterssending_perm = Permission.objects.get(codename='view_owner_stat_letterssending', content_type=letters_sending_content_type)
 
         # Группа менеджеров
         interface_managers_group, created = Group.objects.get_or_create(name='interface_manager')
@@ -89,55 +124,21 @@ class Command(BaseCommand):
 
         # страны пользователей
         Country.truncate()
-        country_obj_list = [
-            {'name': 'russia', 'description': 'Россия'},
-            {'name': 'ukraine', 'description': 'Украина'},
-            {'name': 'belarus', 'description': 'Беларусь'},
-            {'name': 'kazakhstan', 'description': 'Казахстан'},
-            {'name': 'armenia', 'description': 'Армения'},
-        ]
-        seed_table(Country, country_obj_list)
+        seed_table(Country, self.country_obj_list)
         russia_model = Country.objects.get(name='russia')
 
         User.truncate()
+        for user_obj in self.user_obj_list:
+            user_obj['country'] = russia_model
         password = '_strongpassword_'
-        user_obj_list = [
-            {
-                'email': 'admin@test.ru',
-                'country': russia_model,
-                'first_name': 'Админ',
-                'last_name': 'Админов',
-                'is_superuser': True,
-                'is_staff': True
-            },
-            {
-                'email': 'user@test.ru',
-                'country': russia_model,
-                'first_name': 'Пользователь',
-                'last_name': 'Обычный'
-            },
-            {
-                'email': 'manager@test.ru',
-                'country': russia_model,
-                'first_name': 'Менеджер',
-                'last_name': 'Интерфейса',
-                'is_staff': True
-            },
-            {
-                'email': 'bloger@test.ru',
-                'country': russia_model,
-                'first_name': 'Блогер',
-                'last_name': 'Великий',
-                'is_staff': True
-            }
-        ]
+
         user_groups = {
             'user@test.ru': users_group,
             'manager@test.ru': interface_managers_group,
             'bloger@test.ru': blogers_group
         }
 
-        for user_obj in user_obj_list:
+        for user_obj in self.user_obj_list:
             user = User.objects.create(**user_obj)
             user.set_password(password)
             if user_obj['email'] in user_groups:
