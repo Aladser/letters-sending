@@ -5,19 +5,21 @@ from django.core.management import BaseCommand
 from authen.models import User, Country
 from blog.models import Blog
 from letters_sending.models import LettersSending, Client, Message
+from libs.seed_table import seed_table
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         Group.objects.all().delete()
 
+        # контент моделей
         client_content_type = ContentType.objects.get_for_model(Client)
         message_content_type = ContentType.objects.get_for_model(Message)
         letters_sending_content_type = ContentType.objects.get_for_model(LettersSending)
         user_content_type = ContentType.objects.get_for_model(User)
 
+        # разрешения
         admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
-
         view_owner_client_perm = Permission.objects.get(codename='view_owner_client', content_type=client_content_type)
         view_owner_message_perm = Permission.objects.get(codename='view_owner_message', content_type=message_content_type)
         view_owner_letterssending_perm = Permission.objects.get(codename='view_owner_letterssending', content_type=letters_sending_content_type)
@@ -37,15 +39,14 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_message', content_type=message_content_type),
             Permission.objects.get(codename='view_letterssending', content_type=letters_sending_content_type),
             Permission.objects.get(codename='view_stat_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='view_user', content_type=user_content_type),
+            Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
+            Permission.objects.get(codename='block_user', content_type=user_content_type),
 
             view_owner_client_perm,
             view_owner_message_perm,
             view_owner_letterssending_perm,
             view_owner_stat_letterssending_perm,
-
-            Permission.objects.get(codename='view_user', content_type=user_content_type),
-            Permission.objects.get(codename='deactivate_letterssending', content_type=letters_sending_content_type),
-            Permission.objects.get(codename='block_user', content_type=user_content_type),
 
             admin_panel_perm
         )
@@ -95,10 +96,11 @@ class Command(BaseCommand):
             {'name': 'armenia', 'description': 'Армения'},
         ]
         Country.truncate()
-        Country.objects.bulk_create([Country(**param) for param in country_obj_list])
+        seed_table(Country, country_obj_list)
         russia_model = Country.objects.get(name='russia')
 
 
+        password = '_strongpassword_'
         # суперпользователь
         User.truncate()
         user = User.objects.create(
@@ -110,7 +112,7 @@ class Command(BaseCommand):
             is_staff=True
         )
 
-        user.set_password("admin@123")
+        user.set_password(password)
         user.save()
 
         # обычный пользователь
@@ -121,7 +123,7 @@ class Command(BaseCommand):
             last_name='Обычный'
         )
 
-        user.set_password("user@123")
+        user.set_password(password)
         user.groups.add(users_group)
         user.save()
 
@@ -134,7 +136,7 @@ class Command(BaseCommand):
             is_staff = True
         )
 
-        user.set_password("manager@123")
+        user.set_password(password)
         user.groups.add(interface_managers_group)
         user.save()
 
@@ -147,6 +149,6 @@ class Command(BaseCommand):
             is_staff=True
         )
 
-        user.set_password("bloger@123")
+        user.set_password(password)
         user.groups.add(blogers_group)
         user.save()
