@@ -17,6 +17,7 @@ class Command(BaseCommand):
         message_content_type = ContentType.objects.get_for_model(Message)
         letters_sending_content_type = ContentType.objects.get_for_model(LettersSending)
         user_content_type = ContentType.objects.get_for_model(User)
+        blog_content_type = ContentType.objects.get_for_model(Blog)
 
         # разрешения
         admin_panel_perm = Permission.objects.get(codename='view_admin_panel', content_type=user_content_type)
@@ -75,7 +76,6 @@ class Command(BaseCommand):
         [users_group.permissions.add(perm) for perm in user_permissions]
 
         # Группа блогеров
-        blog_content_type = ContentType.objects.get_for_model(Blog)
         blogers_group, created = Group.objects.get_or_create(name='bloger')
         bloger_permissions = (
             Permission.objects.get(codename='view_blog', content_type=blog_content_type),
@@ -88,6 +88,7 @@ class Command(BaseCommand):
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]
 
         # страны пользователей
+        Country.truncate()
         country_obj_list = [
             {'name': 'russia', 'description': 'Россия'},
             {'name': 'ukraine', 'description': 'Украина'},
@@ -95,60 +96,51 @@ class Command(BaseCommand):
             {'name': 'kazakhstan', 'description': 'Казахстан'},
             {'name': 'armenia', 'description': 'Армения'},
         ]
-        Country.truncate()
         seed_table(Country, country_obj_list)
         russia_model = Country.objects.get(name='russia')
 
-
-        password = '_strongpassword_'
-        # суперпользователь
         User.truncate()
-        user = User.objects.create(
-            email='admin@test.ru',
-            country=russia_model,
-            first_name='Админ',
-            last_name='Админов',
-            is_superuser=True,
-            is_staff=True
-        )
+        password = '_strongpassword_'
+        user_obj_list = [
+            {
+                'email': 'admin@test.ru',
+                'country': russia_model,
+                'first_name': 'Админ',
+                'last_name': 'Админов',
+                'is_superuser': True,
+                'is_staff': True
+            },
+            {
+                'email': 'user@test.ru',
+                'country': russia_model,
+                'first_name': 'Пользователь',
+                'last_name': 'Обычный'
+            },
+            {
+                'email': 'manager@test.ru',
+                'country': russia_model,
+                'first_name': 'Менеджер',
+                'last_name': 'Интерфейса',
+                'is_staff': True
+            },
+            {
+                'email': 'bloger@test.ru',
+                'country': russia_model,
+                'first_name': 'Блогер',
+                'last_name': 'Великий',
+                'is_staff': True
+            }
+        ]
+        user_groups = {
+            'user@test.ru': users_group,
+            'manager@test.ru': interface_managers_group,
+            'bloger@test.ru': blogers_group
+        }
 
-        user.set_password(password)
-        user.save()
+        for user_obj in user_obj_list:
+            user = User.objects.create(**user_obj)
+            user.set_password(password)
+            if user_obj['email'] in user_groups:
+                user.groups.add(user_groups[user_obj['email']])
+            user.save()
 
-        # обычный пользователь
-        user = User.objects.create(
-            email='user@test.ru',
-            country=russia_model,
-            first_name='Пользователь',
-            last_name='Обычный'
-        )
-
-        user.set_password(password)
-        user.groups.add(users_group)
-        user.save()
-
-        # менеджер
-        user = User.objects.create(
-            email='manager@test.ru',
-            country=russia_model,
-            first_name='Менеджер',
-            last_name='Интерфейса',
-            is_staff = True
-        )
-
-        user.set_password(password)
-        user.groups.add(interface_managers_group)
-        user.save()
-
-        # блогер
-        user = User.objects.create(
-            email='bloger@test.ru',
-            country=russia_model,
-            first_name='Блогер',
-            last_name='Великий',
-            is_staff=True
-        )
-
-        user.set_password(password)
-        user.groups.add(blogers_group)
-        user.save()
