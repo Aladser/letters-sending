@@ -147,7 +147,7 @@ class LettersSending(TruncateTableMixin, models.Model):
 
 
 # ----- ПОПЫТКА ОТПРАВКИ -----
-class Attempt(models.Model):
+class Attempt(TruncateTableMixin, models.Model):
     """Попытка рассылки"""
 
     letters_sending = models.ForeignKey(
