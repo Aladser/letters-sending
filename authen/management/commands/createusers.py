@@ -2,13 +2,16 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
-from authen.models import User, Country
+from authen.models import User
 from blog.models import Blog
 from letters_sending.models import LettersSending, Client, Message
 from libs.seed_table import seed_table
+from libs.seed_users import seed_users
 
 
 class Command(BaseCommand):
+    password = '_strongpassword_'
+
     country_obj_list = [
         {'name': 'russia', 'description': 'Россия'},
         {'name': 'ukraine', 'description': 'Украина'},
@@ -122,26 +125,17 @@ class Command(BaseCommand):
         )
         [blogers_group.permissions.add(perm) for perm in bloger_permissions]
 
-        # страны пользователей
-        Country.truncate()
-        seed_table(Country, self.country_obj_list)
-        russia_model = Country.objects.get(name='russia')
-
-        User.truncate()
-        for user_obj in self.user_obj_list:
-            user_obj['country'] = russia_model
-        password = '_strongpassword_'
-
         user_groups = {
             'user@test.ru': users_group,
             'manager@test.ru': interface_managers_group,
             'bloger@test.ru': blogers_group
         }
 
-        for user_obj in self.user_obj_list:
-            user = User.objects.create(**user_obj)
-            user.set_password(password)
-            if user_obj['email'] in user_groups:
-                user.groups.add(user_groups[user_obj['email']])
+        User.truncate()
+        seed_users(User, self.user_obj_list, self.password)
+        for user in User.objects.all():
+            if user.email in user_groups:
+                user.groups.add(user_groups[user.email])
             user.save()
+
 
