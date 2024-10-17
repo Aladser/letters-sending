@@ -2,7 +2,9 @@ from authen.services import show_error
 
 
 class OwnerVerificationMixin:
-    """ Модификации GET и POST методов для проверки владельца объекта """
+    """
+    Миксин модификации GET и POST методов для проверки владельца объекта
+    """
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -19,13 +21,14 @@ class OwnerVerificationMixin:
 
 
 class OwnerListVerificationMixin:
-    """Миксин проверки права пользователя на просмотр списка объектов"""
+    """
+    Миксин модификации get_queryset() на просмотр списка всех или своих объектов
+    """
 
     list_permission = None
     list_owner_permission = None
 
     def get_queryset(self):
-        """Возвращает список бъектов с учетом права пользователя на просмотр """
 
         if self.request.user.has_perm(self.list_permission):
             return super().get_queryset()

@@ -149,7 +149,7 @@ class UserListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
 @login_required
 @permission_required('authen.block_user')
 def set_user_activation(request):
-    """установить активность пользователя """
+    """Устанавливает активность пользователя"""
 
     user = User.objects.filter(pk=request.POST['pk'])
     if user.exists():

@@ -16,7 +16,7 @@ CACHED_INDEX_KEY = 'index'
 """ключ хранилища ключей кэшей главной страницы """
 
 
-# СПИСОК ПОПЫТОК
+# СТАТИСТИКА ПОПЫТОК
 class AttemptListView(CustomLoginRequiredMixin, PermissionRequiredMixin, ListView):
     app_name = LetterConfig.name
     permission_required = app_name + ".view_owner_stat_letterssending"

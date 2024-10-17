@@ -1,0 +1,14 @@
+[Unit]
+Description=letters-sending-daemon
+After=network.target
+
+[Service]
+User=aladser
+Group=www-data
+Restart=on-failure
+WorkingDirectory=/var/www/letters-sending
+ExecStart=/var/www/letters-sending/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/var/www/letters-sending/letters-sending.sock config.wsgi
+
+[Install]
+WantedBy=multi-user.target
+

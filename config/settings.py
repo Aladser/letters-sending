@@ -6,7 +6,8 @@ APP_NAME = "Сервис рассылок"
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-27r+^-=803(&$v1wl5%%zkeso7_bb!p$(=regy=u349n2j+^hc"
 DEBUG = True
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['*']
 
 load_dotenv(BASE_DIR / '.env')
 
@@ -88,9 +89,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 NULLABLE = {"null": True, "blank": True}
 
-# СТАТИЧЕСКИЕ ФАЙЛЫ
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# --- СТАТИКА ---
+STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # МЕДИА ФАЙЛЫ
 MEDIA_URL = "/media/"
